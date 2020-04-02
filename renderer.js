@@ -6,34 +6,32 @@
 // process.
 
 const TabGroup = require("electron-tabs");
+const Store = require('./store.js');
 
 let tabGroup = new TabGroup();
 
-const tabData = //getTabDataFromAppConfig();
-[
-	{
-		active: true,
-		src: "https://google.com"
-	}
-];
+// Get the stored infos
+const store = Store.accessStore();
+
+const tabData = store.get('tabData');
 
 for (tabDatum of tabData) {
 	let tab = tabGroup.addTab({
 		active: tabDatum.active,
 		iconURL: tabDatum.customFavIconURL,
 		src: tabDatum.src,
-		title: tabDatum.customTitle,
+		// title: tabDatum.customTitle || '',
 		visible: true
 	});
 
-	if (!tabDatum.customTitle) {
-		tab.webview.addEventListener(
-			'page-title-updated',
-			(e) => {
-				tab.setTitle(e.title);
-			}
-		);
-	}
+	// if (!tabDatum.customTitle) {
+	// 	tab.webview.addEventListener(
+	// 		'page-title-updated',
+	// 		(e) => {
+	// 			tab.setTitle(e.title);
+	// 		}
+	// 	);
+	// }
 	
 	if (!tabDatum.customFavIconURL) {
 		tab.webview.addEventListener(
