@@ -1,20 +1,17 @@
 {
-	"name": "electron-quick-start",
+	"name": "ElectroComm",
 	"version": "1.0.0",
-	"description": "A minimal Electron application",
+	"description": "A minimal Electron webpage communication assimilator",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron ."
 	},
-	"repository": "https://github.com/electron/electron-quick-start",
+	"repository": "https://deviat.net/repos/electrocomm",
 	"keywords": [
 		"Electron",
-		"quick",
-		"start",
-		"tutorial",
-		"demo"
+		"communication"
 	],
-	"author": "GitHub",
+	"author": "Brent Krone-Schmidt",
 	"license": "CC0-1.0",
 	"devDependencies": {
 		"electron": "^7.1.0"

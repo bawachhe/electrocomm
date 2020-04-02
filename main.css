@@ -1,0 +1,90 @@
+/* general */
+
+/* electron tabs */
+
+.etabs-tabgroup {
+	width: 100%;
+	height: 42px;
+	cursor: default;
+	font: caption;
+	font-size: 14px;
+	-webkit-user-select: none;
+	user-select: none;
+	display: none;
+}
+.etabs-tabgroup.visible {
+	display: block;
+}
+
+.etabs-tab {
+	display: none;
+	position: relative;
+	height: 32px;
+	padding: 6px 8px 0;
+	border: 1px solid #aaa;
+	border-bottom: none;
+	border-left: none;
+	font: caption;
+	font-size: 14px;
+	cursor: default;
+}
+
+.etabs-tab.visible {
+	display: inline-block;
+	float: left;
+}
+
+.etabs-tab.active {
+	border-bottom: 3px solid #27B;
+}
+
+.etabs-tab.flash {
+	background: linear-gradient(to bottom, rgba(255,243,170,1) 0%,rgba(255,227,37,1) 100%);
+}
+
+.etabs-buttons {
+	display: none;
+}
+
+.etabs-tab-badge {
+	position: absolute;
+	right: 0;
+	top: -7px;
+	background: red;
+	border-radius: 100%;
+	text-align: center;
+	font-size: 10px;
+	padding: 0 5px;
+}
+
+.etabs-tab-badge.hidden {
+	display: none;
+}
+
+.etabs-tab-icon {
+	display: inline-block;
+	height: 32px;
+}
+
+.etabs-tab-icon img {
+	max-width: 32px;
+	max-height: 32px;
+}
+
+.etabs-views {
+	position: relative;
+	border-top: 1px solid #aaa;
+	height: calc(100vh - 60px);
+}
+
+.etab-view {
+	position: relative;
+}
+
+.etabs-tab-title {
+	display: none;
+}
+
+.etabs-tab-buttons {
+	display: none;
+}
