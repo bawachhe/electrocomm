@@ -1,5 +1,17 @@
 /* general */
 
+div.tab-cfg-headers span {
+	color: #eee;
+	display: inline-block;
+	padding: 5px;
+	margin: 5px;
+	width: 200px;
+}
+
+div.tab-cfgs div.single-tab-cfg input {
+	width: 200px;
+}
+
 /* electron tabs */
 
 .etabs-tabgroup {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>ElectroComm Config</title>
+		<link rel="stylesheet" href="main.css">
+	</head>
+	<body>
+		<div class="proto single-tab-cfg">
+			<input id="src" name="src" type="text" />
+			<input id="customFavIconURL" name="customFavIconURL" type="text" />
+
+			<input id="autoFavIconURL" name="autoFavIconURL" type="hidden" />
+			<button id="deleteTab" type="button">x</button>
+		</div>
+
+		<div class="tab-cfg-headers">
+			<span>Source URL</span>
+			<span>Custom FavIcon URL</span>
+		</div>
+
+		<div class="tab-cfgs"></div>
+
+		<button id="addTab" type="button">+</button>
+		<button id="saveConfig" type="button">Save</button>
+		<button id="cancelConfig" type="button">Cancel</button>
+
+		<script src="./configurender.js"></script>
+	</body>
+</html>

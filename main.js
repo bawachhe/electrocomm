@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const Store = require('./store.js');
 
@@ -7,10 +7,10 @@ const Store = require('./store.js');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
-	// Get the stored infos
-	const store = Store.accessStore();
+// Get the stored infos
+const store = Store.accessStore();
 
+function createWindow () {
 	let {width, height} = store.get('windowBounds');
 	
 	// Create the browser window.
@@ -23,6 +23,40 @@ function createWindow () {
 			webviewTag: true
 		}
 	})
+
+	let configWindow;
+
+	ipcMain.on('open-config', () => {
+		configWindow = new BrowserWindow({
+			parent: mainWindow,
+			modal: true,
+			webPreferences: {
+				nodeIntegration: true,
+				preload: path.join(__dirname, 'preload.js'),
+				webviewTag: true
+			}
+		});
+
+		configWindow.loadFile('config.html');
+	});
+
+	ipcMain.on('save-config', (e, tabData) => {
+		let oldTabData = store.get('tabData');
+
+		store.set('tabData', tabData);
+
+		if (JSON.stringify(tabData) != JSON.stringify(oldTabData)) {
+			mainWindow.reload();
+		}
+
+		configWindow.close();
+		configWindow = null;
+	});
+
+	ipcMain.on('cancel-config', (e, tabData) => {
+		configWindow.close();
+		configWindow = null;
+	});
 
 	mainWindow.on('resize', () => {
 		// The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
