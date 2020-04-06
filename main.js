@@ -17,6 +17,7 @@ function createWindow () {
 	mainWindow = new BrowserWindow({
 		width,
 		height,
+		frame: false,
 		webPreferences: {
 			nodeIntegration: true,
 			preload: path.join(__dirname, 'preload.js'),
@@ -30,6 +31,9 @@ function createWindow () {
 		configWindow = new BrowserWindow({
 			parent: mainWindow,
 			modal: true,
+			frame: false,
+			height: 500,
+			width: 800,
 			webPreferences: {
 				nodeIntegration: true,
 				preload: path.join(__dirname, 'preload.js'),
@@ -69,7 +73,7 @@ function createWindow () {
 	mainWindow.loadFile('index.html')
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools()
+	//mainWindow.webContents.openDevTools()
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {
