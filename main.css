@@ -27,6 +27,22 @@ input, textarea {
 	margin: 5px;
 }
 
+button.close {
+	background: none;
+	border: none;
+	height: 32px;
+	position: fixed;
+	right: 5px;
+	top: 5px;
+	width: 32px;
+	-webkit-app-region: no-drag;
+}
+button.close svg {
+	height: 100%;
+	stroke: #666;
+	width: 100%;
+}
+
 /* config page */
 
 button.config {
@@ -34,7 +50,7 @@ button.config {
 	border: none;
 	height: 32px;
 	position: fixed;
-	right: 5px;
+	right: 42px;
 	top: 5px;
 	width: 32px;
 	-webkit-app-region: no-drag;

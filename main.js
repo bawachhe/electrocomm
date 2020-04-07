@@ -62,6 +62,10 @@ function createWindow () {
 		configWindow = null;
 	});
 
+	ipcMain.on('close', () => {
+		mainWindow.close();
+	})
+
 	mainWindow.on('resize', () => {
 		// The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
 		// the height, width, and x and y coordinates.
@@ -81,6 +85,8 @@ function createWindow () {
 		// in an array if your app supports multi windows, this is the time
 		// when you should delete the corresponding element.
 		mainWindow = null
+
+		app.quit();
 	})
 }
 

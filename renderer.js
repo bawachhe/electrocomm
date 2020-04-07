@@ -5,7 +5,7 @@
 // selectively enable features needed in the rendering
 // process.
 
-const {ipcRenderer} = require('electron');
+const {ipcRenderer, remote} = require('electron');
 const TabGroup = require("electron-tabs");
 const Store = require('./store.js');
 
@@ -17,6 +17,25 @@ const store = Store.accessStore();
 document.querySelector('button.config').addEventListener('click', () => {
 	ipcRenderer.send('open-config');
 })
+
+document.querySelector('button.close').addEventListener('click', () => {
+	ipcRenderer.send('close');
+})
+
+remote.globalShortcut.register('CommandOrControl+R', () => {
+	let tgActiveTab = tabGroup.getActiveTab();
+	if (tgActiveTab) {
+		tgActiveTab.webview.reload();
+	}
+});
+
+remote.globalShortcut.register('F5', () => {
+	let tgActiveTab = tabGroup.getActiveTab();
+
+	if (tgActiveTab) {
+		tgActiveTab.webview.reload();
+	}
+});
 
 const tabData = store.get('tabData');
 const activeTab = store.get('activeTab');
@@ -49,6 +68,23 @@ if (tabData) {
 		tab.webview.addEventListener('did-stop-loading', () => {
 			tab.setBadge();
 		})
+
+		const menu = remote.Menu.buildFromTemplate([
+			{
+				label: 'Reload Tab',
+				click() { tab.webview.reload() }
+			},
+			{
+				label: 'Forget Tab Sessions/Cookies',
+				click() {
+					remote.session.defaultSession.clearStorageData({origin: tabDatum.src});
+				}
+			}
+		]);
+
+		tab.tab.addEventListener('contextmenu', () => {
+			menu.popup()
+		}, false)
 
 		if (!tabDatum.customFavIconURL) {
 			tab.webview.addEventListener(
