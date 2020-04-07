@@ -61,8 +61,30 @@ button.config svg {
 	width: 100%;
 }
 
+span.handle {
+	display: inline-block;
+	height: 32px;
+	padding: 5px;
+	margin: 5px;
+	width: 32px;
+}
+span.handle svg {
+	height: 100%;
+	width: 100%;
+}
+span.handle svg polygon {
+	fill: #666;
+}
+span.handle svg line {
+	stroke: #666;
+}
+
 div.proto.single-tab-cfg {
 	display: none;
+}
+
+div.tab-cfg-headers {
+	margin-left: 52px;
 }
 
 div.tab-cfg-headers span {
@@ -71,6 +93,10 @@ div.tab-cfg-headers span {
 	padding: 5px;
 	margin: 5px;
 	width: 200px;
+}
+
+div.tab-cfgs div.single-tab-cfg * {
+	vertical-align: middle;
 }
 
 div.tab-cfgs div.single-tab-cfg input {

@@ -17,6 +17,7 @@
 		"electron": "^7.1.0"
 	},
 	"dependencies": {
+		"dragula": "^3.7.2",
 		"electron-tabs": "^0.15.0"
 	}
 }

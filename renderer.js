@@ -7,12 +7,44 @@
 
 const {ipcRenderer, remote} = require('electron');
 const TabGroup = require("electron-tabs");
+const dragula = require('dragula');
 const Store = require('./store.js');
-
-let tabGroup = new TabGroup();
 
 // Get the stored infos
 const store = Store.accessStore();
+
+const tabData = store.get('tabData');
+const activeTab = store.get('activeTab');
+
+let tabGroup = new TabGroup({
+	ready: (tabGroup) => {
+		let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
+
+		drake.on('drop', (el, target, source, sibling) => {
+			let tabSrc = el.querySelector('.etabs-tab-title').innerHTML;
+			let siblingSrc;
+
+			if (sibling) {
+				siblingSrc = sibling.querySelector('.etabs-tab-title').innerHTML;
+			}
+
+			let tabIndex, siblingIndex;
+
+			for (let i = 0; i < tabData.length; i++) {
+				if (tabData[i].src == tabSrc) {
+					tabIndex = i;
+				}
+				if (tabData[i].src == siblingSrc) {
+					siblingIndex = i;
+				}
+			}
+
+			tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
+
+			store.set('tabData', tabData);
+		});
+	}
+});
 
 document.querySelector('button.config').addEventListener('click', () => {
 	ipcRenderer.send('open-config');
@@ -37,9 +69,6 @@ remote.globalShortcut.register('F5', () => {
 	}
 });
 
-const tabData = store.get('tabData');
-const activeTab = store.get('activeTab');
-
 if (tabData) {
 	tabGroup.on('tab-active', (tab) => {
 		store.set('activeTab', tab.webviewAttributes.src);
@@ -52,6 +81,7 @@ if (tabData) {
 			active: (tabDatum.src == activeTab),
 			iconURL: tabDatum.customFavIconURL || tabDatum.autoFavIconURL,
 			src: tabDatum.src,
+			title: tabDatum.src,
 			visible: true,
 			webviewAttributes: {
 				useragent:

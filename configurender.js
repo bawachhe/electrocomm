@@ -7,6 +7,7 @@
 
 const {ipcRenderer, remote} = require('electron');
 const Store = require('./store.js');
+const dragula = require('dragula');
 
 // Get the stored infos
 const store = Store.accessStore();
@@ -73,3 +74,17 @@ if (tabData) {
 		addTabConfig(tabDatum);
 	}
 }
+
+dragula(
+	[tabCfgsDiv],
+	{
+		direction: 'vertical',
+		invalid: (el, handle) => {
+			for (; handle && !handle.classList.contains('single-tab-cfg'); handle = handle.parentNode)
+				if (handle.classList.contains('handle'))
+					return false;
+
+			return true;
+		}
+	}
+);
