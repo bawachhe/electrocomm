@@ -19,12 +19,19 @@ document.querySelector('button.config').addEventListener('click', () => {
 })
 
 const tabData = store.get('tabData');
+const activeTab = store.get('activeTab');
 
 if (tabData) {
-	for (tabDatum of tabData) {
+	tabGroup.on('tab-active', (tab) => {
+		store.set('activeTab', tab.webviewAttributes.src);
+	});
+
+	for (let tabIndex in tabData) {
+		const tabDatum = tabData[tabIndex];
+
 		let tab = tabGroup.addTab({
-			active: tabDatum.active,
-			iconURL: tabDatum.customFavIconURL,
+			active: (tabDatum.src == activeTab),
+			iconURL: tabDatum.customFavIconURL || tabDatum.autoFavIconURL,
 			src: tabDatum.src,
 			visible: true
 		});
@@ -34,7 +41,11 @@ if (tabData) {
 			tab.webview.addEventListener(
 				'page-favicon-updated',
 				(e) => {
-					tab.setIcon(e.favicons[0]);
+					if (tabDatum.autoFavIconURL != e.favicons[0]) {
+						tab.setIcon(e.favicons[0]);
+
+						store.setAutoTabIcon(tabIndex, e.favicons[0]);
+					}
 				}
 			);
 		}

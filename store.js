@@ -36,6 +36,15 @@ class Store {
 		this.data[key] = val;
 		fs.writeFileSync(this.path, JSON.stringify(this.data));
 	}
+
+	setAutoTabIcon(tabIndex, url) {
+		let tabData = this.data['tabData'];
+
+		if (tabData) {
+			tabData[tabIndex].autoFavIconURL = url;
+			fs.writeFileSync(this.path, JSON.stringify(this.data));
+		}
+	}
 }
 
 function parseDataFile(filePath, defaults) {
