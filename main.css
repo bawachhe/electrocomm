@@ -85,16 +85,17 @@ div.tab-cfgs div.single-tab-cfg input {
 }
 
 .etabs-tab {
+	background-color: #555;
+	border: none;
+	border-radius: 10px 10px 0 0;
+	cursor: default;
 	display: none;
-	position: relative;
-	height: 32px;
-	padding: 6px 8px 0;
-	border: 1px solid #aaa;
-	border-bottom: none;
-	border-left: none;
 	font: caption;
 	font-size: 14px;
-	cursor: default;
+	height: 32px;
+	padding: 6px 8px 0;
+	position: relative;
+	margin: 2px;
 }
 
 .etabs-tab.visible {
@@ -102,7 +103,11 @@ div.tab-cfgs div.single-tab-cfg input {
 }
 
 .etabs-tab.active {
-	border-bottom: 3px solid #27B;
+	background-color: #58c;
+}
+
+.etabs-tab.loading {
+	border-bottom: 3px dashed #2B2;
 }
 
 .etabs-tab.flash {
