@@ -42,6 +42,14 @@ if (tabData) {
 			}
 		});
 
+		tab.webview.addEventListener('did-start-loading', () => {
+			tab.setBadge('<img src="loading.gif" />');
+		})
+
+		tab.webview.addEventListener('did-stop-loading', () => {
+			tab.setBadge();
+		})
+
 		if (!tabDatum.customFavIconURL) {
 			tab.webview.addEventListener(
 				'page-favicon-updated',
