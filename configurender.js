@@ -18,9 +18,10 @@ const protoDiv = document.querySelector('div.proto.single-tab-cfg');
 const tabCfgsDiv = document.querySelector('div.tab-cfgs');
 
 document.querySelector('button#saveConfig').addEventListener('click', () => {
+	let tabSrcInputs = tabCfgsDiv.querySelectorAll('input#src');
 	let tabAutoFavIconURLInputs = tabCfgsDiv.querySelectorAll('input#autoFavIconURL');
 	let tabCustomFavIconURLInputs = tabCfgsDiv.querySelectorAll('input#customFavIconURL');
-	let tabSrcInputs = tabCfgsDiv.querySelectorAll('input#src');
+	let tabSessionPartitionInputs = tabCfgsDiv.querySelectorAll('input#sessionPartition');
 
 	let inputTabData = new Array(tabSrcInputs.length);
 
@@ -28,7 +29,8 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 		inputTabData[inputIndex] = {
 			autoFavIconURL: tabAutoFavIconURLInputs[inputIndex].value,
 			customFavIconURL: tabCustomFavIconURLInputs[inputIndex].value,
-			src: tabSrcInputs[inputIndex].value
+			src: tabSrcInputs[inputIndex].value,
+			sessionPartition: tabSessionPartitionInputs[inputIndex].value
 		};
 	}
 
@@ -55,6 +57,10 @@ function addTabConfig(tabDatum) {
 	const customFavIconURLInput = copySingleTabCfg.querySelector('input#customFavIconURL');
 
 	customFavIconURLInput.value = tabDatum && tabDatum.customFavIconURL ? tabDatum.customFavIconURL : '';
+
+	const sessionPartitionInput = copySingleTabCfg.querySelector('input#sessionPartition');
+
+	sessionPartitionInput.value = tabDatum && tabDatum.sessionPartition ? tabDatum.sessionPartition : '';
 
 	const delButton = copySingleTabCfg.querySelector('button#deleteTab');
 

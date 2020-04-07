@@ -61,6 +61,12 @@ remote.globalShortcut.register('CommandOrControl+R', () => {
 	}
 });
 
+remote.globalShortcut.register('CommandOrControl+Shift+R', () => {
+	tabGroup.eachTab((currentTab) => {
+		currentTab.webview.reload();
+	});
+});
+
 remote.globalShortcut.register('F5', () => {
 	let tgActiveTab = tabGroup.getActiveTab();
 
@@ -84,6 +90,7 @@ if (tabData) {
 			title: tabDatum.src,
 			visible: true,
 			webviewAttributes: {
+				partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 				useragent:
 					"Mozilla/5.0 (X11; Fedora; Linux x86_64) " +
 					"AppleWebKit/537.36 (KHTML, like Gecko) " +
