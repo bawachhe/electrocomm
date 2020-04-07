@@ -26,18 +26,9 @@ if (tabData) {
 			active: tabDatum.active,
 			iconURL: tabDatum.customFavIconURL,
 			src: tabDatum.src,
-			// title: tabDatum.customTitle || '',
 			visible: true
 		});
 
-		// if (!tabDatum.customTitle) {
-		// 	tab.webview.addEventListener(
-		// 		'page-title-updated',
-		// 		(e) => {
-		// 			tab.setTitle(e.title);
-		// 		}
-		// 	);
-		// }
 
 		if (!tabDatum.customFavIconURL) {
 			tab.webview.addEventListener(
