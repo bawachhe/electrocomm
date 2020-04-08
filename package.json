@@ -1,10 +1,14 @@
 {
-	"name": "ElectroComm",
+	"name": "electrocomm",
+	"productName": "ElectroComm",
 	"version": "1.0.0",
 	"description": "A minimal Electron webpage communication assimilator",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron ."
+		"start": "electron .",
+		"build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=res/icon.icns --prune=true --out=release-builds",
+		"build-linux": "electron-packager . --overwrite --asar --platform=linux --arch=x64 --icon=res/icon.png --prune=true --out=release-builds",
+		"build-windows": "electron-packager . --overwrite --asar --platform=win32 --arch=x64 --icon=res/icon.png --prune=true --out=release-builds"
 	},
 	"repository": "https://deviat.net/repos/electrocomm",
 	"keywords": [
@@ -14,7 +18,8 @@
 	"author": "Brent Krone-Schmidt",
 	"license": "CC0-1.0",
 	"devDependencies": {
-		"electron": "^7.1.0"
+		"electron": "^7.1.0",
+		"electron-packager": "^14.2.1"
 	},
 	"dependencies": {
 		"dragula": "^3.7.2",
