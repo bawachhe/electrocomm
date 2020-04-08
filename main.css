@@ -140,6 +140,8 @@ div.tab-cfgs div.single-tab-cfg input {
 	padding: 6px 8px 0;
 	position: relative;
 	margin: 2px;
+	text-align: center;
+	vertical-align: middle;
 }
 
 .etabs-tab.visible {
@@ -184,11 +186,18 @@ div.tab-cfgs div.single-tab-cfg input {
 .etabs-tab-icon {
 	display: inline-block;
 	height: 32px;
+	width: 32px;
 }
 
 .etabs-tab-icon img {
+	bottom: 0;
+	left: 0;
 	max-width: 32px;
 	max-height: 32px;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 
 .etabs-views {
