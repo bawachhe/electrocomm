@@ -18,6 +18,7 @@ function createWindow () {
 		width,
 		height,
 		frame: false,
+		icon: path.join(__dirname, 'res/icon.png'),
 		webPreferences: {
 			nodeIntegration: true,
 			preload: path.join(__dirname, 'preload.js'),
