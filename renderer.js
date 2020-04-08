@@ -50,6 +50,14 @@ document.querySelector('button.config').addEventListener('click', () => {
 	ipcRenderer.send('open-config');
 })
 
+document.querySelector('button.minimize').addEventListener('click', () => {
+	ipcRenderer.send('minimize');
+})
+
+document.querySelector('button.maximize').addEventListener('click', () => {
+	ipcRenderer.send('maximize');
+})
+
 document.querySelector('button.close').addEventListener('click', () => {
 	ipcRenderer.send('close');
 })

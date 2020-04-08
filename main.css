@@ -27,39 +27,41 @@ input, textarea {
 	margin: 5px;
 }
 
-button.close {
+button.config, button.minimize, button.maximize, button.close {
 	background: none;
 	border: none;
 	height: 32px;
+	outline: none;
 	position: fixed;
-	right: 5px;
 	top: 5px;
 	width: 32px;
 	-webkit-app-region: no-drag;
 }
-button.close svg {
+button.minimize svg, button.maximize svg, button.close svg {
 	height: 100%;
 	stroke: #666;
 	width: 100%;
-}
-
-/* config page */
-
-button.config {
-	background: none;
-	border: none;
-	height: 32px;
-	position: fixed;
-	right: 42px;
-	top: 5px;
-	width: 32px;
-	-webkit-app-region: no-drag;
 }
 button.config svg {
 	fill: #666;
 	height: 100%;
 	width: 100%;
 }
+
+
+button.config {
+	right: 116px;
+}
+button.minimize {
+	right: 79px;
+}
+button.maximize {
+	right: 42px;
+}
+button.close {
+	right: 5px;
+}
+
 
 span.handle {
 	display: inline-block;
