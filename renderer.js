@@ -106,6 +106,14 @@ if (tabData) {
 			tab.setBadge();
 		})
 
+		tab.webview.addEventListener('new-window', (e) => {
+			const protocol = require('url').parse(e.url).protocol;
+
+			if (protocol === 'http:' || protocol === 'https:') {
+				remote.shell.openExternal(e.url)
+			}
+		});
+
 		const menu = remote.Menu.buildFromTemplate([
 			{
 				label: 'Reload Tab',
