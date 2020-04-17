@@ -11,12 +11,14 @@ let mainWindow
 const store = Store.accessStore();
 
 function createWindow () {
-	let {width, height} = store.get('windowBounds');
+	let {width, height, x, y} = store.get('windowBounds');
 	
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width,
 		height,
+		x,
+		y,
 		frame: false,
 		icon: path.join(__dirname, 'res/icon.png'),
 		webPreferences: {
@@ -78,12 +80,16 @@ function createWindow () {
 		mainWindow.close();
 	})
 
-	mainWindow.on('resize', () => {
+	const saveWindowBounds = () => {
 		// The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
 		// the height, width, and x and y coordinates.
-		let { width, height } = mainWindow.getBounds();
-		store.set('windowBounds', { width, height });
-	});
+		let { width, height, x, y } = mainWindow.getBounds();
+		store.set('windowBounds', { width, height, x, y });
+	};
+
+	mainWindow.on('resize', saveWindowBounds);
+
+	mainWindow.on('move', saveWindowBounds);
 
 	// Load the index.html of the app.
 	mainWindow.loadFile('index.html')
