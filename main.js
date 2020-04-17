@@ -31,12 +31,19 @@ function createWindow () {
 	let configWindow;
 
 	ipcMain.on('open-config', () => {
+		const mainWindowBounds = mainWindow.getBounds();
+
+		const x = mainWindowBounds['x'] + ((mainWindowBounds['width'] / 2) - 400);
+		const y = mainWindowBounds['y'] + ((mainWindowBounds['height'] / 2) - 250);
+
 		configWindow = new BrowserWindow({
 			parent: mainWindow,
 			modal: true,
 			frame: false,
 			height: 500,
 			width: 800,
+			x,
+			y,
 			webPreferences: {
 				nodeIntegration: true,
 				preload: path.join(__dirname, 'preload.js'),
