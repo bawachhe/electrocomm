@@ -62,26 +62,41 @@ document.querySelector('button.close').addEventListener('click', () => {
 	ipcRenderer.send('close');
 })
 
-remote.globalShortcut.register('CommandOrControl+R', () => {
-	let tgActiveTab = tabGroup.getActiveTab();
-	if (tgActiveTab) {
-		tgActiveTab.webview.reload();
+const hiddenAcceleratorOnlyContextMenu = remote.Menu.buildFromTemplate([
+	{
+		accelerator: 'F5',
+		label: 'Reload Current Tab',
+		click() {
+			let tgActiveTab = tabGroup.getActiveTab();
+
+			if (tgActiveTab) {
+				tgActiveTab.webview.reload();
+			}
+		}
+	},
+	{
+		accelerator: 'CommandOrControl+R',
+		label: 'No Really, Reload Current Tab (same bat MenuItem, different bat shortcut)',
+		click() {
+			let tgActiveTab = tabGroup.getActiveTab();
+
+			if (tgActiveTab) {
+				tgActiveTab.webview.reload();
+			}
+		}
+	},
+	{
+		accelerator: 'CommandOrControl+Shift+R',
+		label: 'Reload All Tabs',
+		click() {
+			tabGroup.eachTab((currentTab) => {
+				currentTab.webview.reload();
+			});
+		}
 	}
-});
+]);
 
-remote.globalShortcut.register('CommandOrControl+Shift+R', () => {
-	tabGroup.eachTab((currentTab) => {
-		currentTab.webview.reload();
-	});
-});
-
-remote.globalShortcut.register('F5', () => {
-	let tgActiveTab = tabGroup.getActiveTab();
-
-	if (tgActiveTab) {
-		tgActiveTab.webview.reload();
-	}
-});
+remote.Menu.setApplicationMenu(hiddenAcceleratorOnlyContextMenu);
 
 if (tabData) {
 	tabGroup.on('tab-active', (tab) => {
