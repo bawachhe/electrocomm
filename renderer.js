@@ -146,6 +146,10 @@ if (tabData) {
 				label: 'Forget Tab Sessions/Cookies',
 				click() {
 					remote.session.defaultSession.clearStorageData({origin: tabDatum.src});
+
+					if (tabDatum.sessionPartition) {
+						remote.session.fromPartition("persist:" + tabDatum.sessionPartition).clearStorageData();
+					}
 				}
 			}
 		]);
