@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
 const Store = require('./store.js');
+
+require('@electron/remote/main').initialize();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
 
 // Get the stored infos
 const store = Store.accessStore();
@@ -54,6 +56,8 @@ function createWindow () {
 		});
 
 		configWindow.loadFile('config.html');
+
+		// configWindow.webContents.openDevTools()
 	});
 
 	ipcMain.on('save-config', (e, tabData) => {
@@ -104,7 +108,7 @@ function createWindow () {
 	mainWindow.loadFile('index.html')
 
 	// Open the DevTools.
-	//mainWindow.webContents.openDevTools()
+	// mainWindow.webContents.openDevTools()
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {
