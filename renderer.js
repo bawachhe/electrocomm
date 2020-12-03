@@ -131,10 +131,15 @@ if (tabData) {
 		})
 
 		tab.webview.addEventListener('new-window', (e) => {
-			const protocol = require('url').parse(e.url).protocol;
+			const url = require('url').parse(e.url);
 
-			if (protocol === 'http:' || protocol === 'https:') {
-				remote.shell.openExternal(e.url)
+			if (url.protocol === 'http:' || url.protocol === 'https:') {
+				if (tabDatum.hostnameWhitelist && tabDatum.hostnameWhitelist.indexOf(url.hostname) != -1) {
+					tab.webview.loadURL(e.url);
+				}
+				else {
+					remote.shell.openExternal(e.url);
+				}
 			}
 		});
 

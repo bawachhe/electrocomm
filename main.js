@@ -42,7 +42,7 @@ function createWindow () {
 			modal: true,
 			frame: false,
 			height: 500,
-			width: 800,
+			width: 830,
 			x,
 			y,
 			webPreferences: {

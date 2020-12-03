@@ -65,10 +65,10 @@ button.close {
 
 span.handle {
 	display: inline-block;
-	height: 32px;
+	height: 24px;
 	padding: 5px;
 	margin: 5px;
-	width: 32px;
+	width: 24px;
 }
 span.handle svg {
 	height: 100%;
@@ -81,12 +81,26 @@ span.handle svg line {
 	stroke: #666;
 }
 
+button.delete-tab {
+	height: 24px;
+	padding: 0;
+	width: 24px;
+}
+button.delete-tab svg line {
+	stroke: #fff;
+	stroke-linecap: round;
+	stroke-width: 3;
+}
+
 div.proto.single-tab-cfg {
 	display: none;
 }
 
 div.tab-cfg-headers {
-	margin-left: 52px;
+	display: grid;
+	font-size: 12px;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 40px;
+	place-items: center;
 	-webkit-app-region: drag;
 }
 
@@ -95,7 +109,6 @@ div.tab-cfg-headers span {
 	display: inline-block;
 	padding: 5px;
 	margin: 5px;
-	width: 200px;
 }
 
 div.tab-cfgs {
@@ -104,12 +117,15 @@ div.tab-cfgs {
 	overflow-y: auto;
 }
 
-div.tab-cfgs div.single-tab-cfg * {
-	vertical-align: middle;
+div.tab-cfgs div.single-tab-cfg {
+	display: grid;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 40px;
+	place-items: center;
 }
 
 div.tab-cfgs div.single-tab-cfg input {
-	width: 200px;
+	height: 30px;
+	min-width: 100px;
 }
 
 /* electron tabs */
