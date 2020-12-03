@@ -5,7 +5,7 @@
 // selectively enable features needed in the rendering
 // process.
 
-const {ipcRenderer, remote} = require('electron');
+const {ipcRenderer} = require('electron');
 const Store = require('./store.js');
 const dragula = require('dragula');
 

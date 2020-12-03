@@ -22,6 +22,7 @@ function createWindow () {
 		frame: false,
 		icon: path.join(__dirname, 'res/icon.png'),
 		webPreferences: {
+			enableRemoteModule: true,
 			nodeIntegration: true,
 			preload: path.join(__dirname, 'preload.js'),
 			webviewTag: true
@@ -45,6 +46,7 @@ function createWindow () {
 			x,
 			y,
 			webPreferences: {
+				enableRemoteModule: true,
 				nodeIntegration: true,
 				preload: path.join(__dirname, 'preload.js'),
 				webviewTag: true
