@@ -12,6 +12,12 @@ let mainWindow;
 // Get the stored infos
 const store = Store.accessStore();
 
+const isSingleInstance = app.requestSingleInstanceLock();
+
+if (!isSingleInstance) {
+	app.quit();
+}
+
 function createWindow () {
 	let {width, height, x, y} = store.get('windowBounds');
 	
@@ -130,7 +136,7 @@ app.on('ready', createWindow)
 app.on('window-all-closed', function () {
 	// On macOS it is common for applications and their menu bar
 	// to stay active until the user quits explicitly with Cmd + Q
-	if (process.platform !== 'darwin') app.quit()
+	app.quit()
 })
 
 app.on('activate', function () {
