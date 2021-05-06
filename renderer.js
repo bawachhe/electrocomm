@@ -47,6 +47,15 @@ let tabGroup = new TabGroup({
 	}
 });
 
+ipcRenderer.on('back-or-forward', function(event, backOrForward) {
+	if (backOrForward == 'browser-backward') {
+		doGoBack();
+	}
+	else if (backOrForward == 'browser-forward') {
+		doGoFwd();
+	}
+});
+
 function doGoBack() {
 	if (tabGroup) {
 		const currentActiveTab = tabGroup.getActiveTab();

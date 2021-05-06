@@ -1,4 +1,5 @@
 // Modules to control application life and create native browser window
+const main = require('@electron/remote/main');
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const Store = require('./store.js');
@@ -8,6 +9,9 @@ require('@electron/remote/main').initialize();
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+// enable native (OS-specific) stuff to work
+app.allowRendererProcessReuse = false;
 
 // Get the stored infos
 const store = Store.accessStore();
@@ -109,6 +113,12 @@ function createWindow () {
 	mainWindow.on('resize', saveWindowBounds);
 
 	mainWindow.on('move', saveWindowBounds);
+
+	mainWindow.on('app-command', (e, cmd) => {
+		if (cmd === 'browser-backward' || cmd === 'browser-forward') {
+			mainWindow.webContents.send('back-or-forward', cmd);
+		}
+	});
 
 	// Load the index.html of the app.
 	mainWindow.loadFile('index.html')
