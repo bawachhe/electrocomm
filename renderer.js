@@ -47,6 +47,42 @@ let tabGroup = new TabGroup({
 	}
 });
 
+function doGoBack() {
+	if (tabGroup) {
+		const currentActiveTab = tabGroup.getActiveTab();
+
+		if (currentActiveTab) {
+			const currentActiveWebView = currentActiveTab.webview;
+
+			if (currentActiveWebView.canGoBack()) {
+				currentActiveWebView.goBack();
+			}
+		}
+	}
+}
+
+function doGoFwd() {
+	if (tabGroup) {
+		const currentActiveTab = tabGroup.getActiveTab();
+
+		if (currentActiveTab) {
+			const currentActiveWebView = currentActiveTab.webview;
+
+			if (currentActiveWebView.canGoForward()) {
+				currentActiveWebView.goForward();
+			}
+		}
+	}
+}
+
+document.querySelector('button.back').addEventListener('click', () => {
+	doGoBack();
+})
+
+document.querySelector('button.forward').addEventListener('click', () => {
+	doGoFwd();
+})
+
 document.querySelector('button.config').addEventListener('click', () => {
 	ipcRenderer.send('open-config');
 })
@@ -93,6 +129,20 @@ const hiddenAcceleratorOnlyContextMenu = remote.Menu.buildFromTemplate([
 			tabGroup.eachTab((currentTab) => {
 				currentTab.webview.reload();
 			});
+		}
+	},
+	{
+		accelerator: 'Alt+Left',
+		label: 'History: Back',
+		click() {
+			doGoBack();
+		}
+	},
+	{
+		accelerator: 'Alt+Right',
+		label: 'History: Forward',
+		click() {
+			doGoFwd();
 		}
 	}
 ]);

@@ -27,7 +27,7 @@ input, textarea {
 	margin: 5px;
 }
 
-button.config, button.minimize, button.maximize, button.close {
+button.back, button.forward, button.config, button.minimize, button.maximize, button.close {
 	background: none;
 	border: none;
 	height: 32px;
@@ -37,18 +37,32 @@ button.config, button.minimize, button.maximize, button.close {
 	width: 32px;
 	-webkit-app-region: no-drag;
 }
-button.minimize svg, button.maximize svg, button.close svg {
+button.back svg, button.forward svg, button.minimize svg, button.maximize svg, button.close svg {
 	height: 100%;
 	stroke: #666;
 	width: 100%;
 }
-button.config svg {
+button.back svg, button.forward svg, button.config svg {
 	fill: #666;
 	height: 100%;
 	width: 100%;
 }
 
+button.back:hover svg, button.forward:hover svg, button.minimize:hover svg,
+button.maximize:hover svg, button.close:hover svg {
+	stroke: #AAA;
+}
 
+button.back:hover svg, button.forward:hover svg, button.config:hover svg {
+	fill: #AAA;
+}
+
+button.back {
+	right: 190px;
+}
+button.forward {
+	right: 153px;
+}
 button.config {
 	right: 116px;
 }
