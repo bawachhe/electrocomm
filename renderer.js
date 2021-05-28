@@ -166,6 +166,12 @@ if (tabData) {
 	for (let tabIndex in tabData) {
 		const tabDatum = tabData[tabIndex];
 
+		let src = tabDatum.src;
+
+		if (!src.match(/^https?:\/\//)) {
+			src = "https://" + src;
+		}
+
 		let tab = tabGroup.addTab({
 			active: (tabDatum.src == activeTab),
 			iconURL: tabDatum.customFavIconURL || tabDatum.autoFavIconURL,
@@ -175,9 +181,8 @@ if (tabData) {
 			webviewAttributes: {
 				partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 				userAgent:
-					"Mozilla/5.0 (X11; Fedora; Linux x86_64) " +
-					"AppleWebKit/537.36 (KHTML, like Gecko) " +
-					"Chrome/87.0.4280.66 Safari/537.36"
+					tabDatum.customUserAgent ||
+					"Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
 			}
 		});
 

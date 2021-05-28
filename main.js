@@ -53,8 +53,8 @@ function createWindow () {
 			parent: mainWindow,
 			modal: true,
 			frame: false,
-			height: 500,
-			width: 830,
+			height: 600,
+			width: 1200,
 			x,
 			y,
 			webPreferences: {

@@ -23,6 +23,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 	let tabCustomFavIconURLInputs = tabCfgsDiv.querySelectorAll('input#customFavIconURL');
 	let tabSessionPartitionInputs = tabCfgsDiv.querySelectorAll('input#sessionPartition');
 	let tabHostnameWhitelistInputs = tabCfgsDiv.querySelectorAll('input#hostnameWhitelist');
+	let tabCustomUserAgentInputs = tabCfgsDiv.querySelectorAll('input#customUserAgent');
 
 	let inputTabData = new Array(tabSrcInputs.length);
 
@@ -32,7 +33,8 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 			customFavIconURL: tabCustomFavIconURLInputs[inputIndex].value,
 			src: tabSrcInputs[inputIndex].value,
 			sessionPartition: tabSessionPartitionInputs[inputIndex].value,
-			hostnameWhitelist: tabHostnameWhitelistInputs[inputIndex].value
+			hostnameWhitelist: tabHostnameWhitelistInputs[inputIndex].value,
+			customUserAgent: tabCustomUserAgentInputs[inputIndex].value
 		};
 	}
 
@@ -67,6 +69,10 @@ function addTabConfig(tabDatum) {
 	const hostnameWhitelistInput = copySingleTabCfg.querySelector('input#hostnameWhitelist');
 
 	hostnameWhitelistInput.value = tabDatum && tabDatum.hostnameWhitelist ? tabDatum.hostnameWhitelist : '';
+
+	const customUserAgentInput = copySingleTabCfg.querySelector('input#customUserAgent');
+
+	customUserAgentInput.value = tabDatum && tabDatum.customUserAgent ? tabDatum.customUserAgent : '';
 
 	const delButton = copySingleTabCfg.querySelector('button#deleteTab');
 

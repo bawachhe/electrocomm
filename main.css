@@ -113,7 +113,7 @@ div.proto.single-tab-cfg {
 div.tab-cfg-headers {
 	display: grid;
 	font-size: 12px;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 40px;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 40px;
 	place-items: center;
 	-webkit-app-region: drag;
 }
@@ -133,7 +133,7 @@ div.tab-cfgs {
 
 div.tab-cfgs div.single-tab-cfg {
 	display: grid;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 40px;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 40px;
 	place-items: center;
 }
 

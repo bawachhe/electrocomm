@@ -22,6 +22,7 @@
 
 			<input id="sessionPartition" name="sessionPartition" placeholder="Session Partition Key" type="text" />
 			<input id="hostnameWhitelist" name="hostnameWhitelist" placeholder="Hostname Whitelist" type="text" />
+			<input id="customUserAgent" name="customUserAgent" placeholder="Custom UserAgent" type="text" />
 			<button class="delete-tab" id="deleteTab" type="button">
 				<svg class="delete" x="0px" y="0px" viewBox="0 0 20 20">
 					<line x1="6" x2="14" y1="6" y2="14" />
@@ -32,10 +33,11 @@
 
 		<div class="tab-cfg-headers">
 			<span class="spacer"></span>
-			<span>SOURCE URL</span>
+			<span>SOURCE URL (will default to https://)</span>
 			<span>CUSTOM FAVICON URL</span>
 			<span>SESSION PARTITION Key</span>
 			<span title="add hostnames (domain+subdomain) which will open in the tab rather than the external browser">HOSTNAME WHITELIST</span>
+			<span >CUSTOM USERAGENT</span>
 			<span class="spacer"></span>
 		</div>
 
