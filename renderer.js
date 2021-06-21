@@ -17,9 +17,9 @@ const store = Store.accessStore();
 const tabData = store.get('tabData');
 const activeTab = store.get('activeTab');
 
-window.onerror = function(e) {
-	ipcRenderer.send('crash', e.message, e);
-}
+// window.onerror = function(e) {
+// 	ipcRenderer.send('crash', e.message, e);
+// }
 
 let tabGroup = new TabGroup({
 	ready: (tabGroup) => {
@@ -196,7 +196,8 @@ if (tabData) {
 			webviewAttributes: {
 				partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 				userAgent:
-					tabDatum.customUserAgent || "Chrome/90.0.4430.212"
+					tabDatum.customUserAgent || 
+					"Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212"
 			}
 		});
 

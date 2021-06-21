@@ -26,6 +26,7 @@ I'm not going to ever charge money to use this, not from myself (obviously) and 
 - Open external links in default browser
 - Highly simplified interface (no title bar, drag blank space next to tabs to move window)
 - Neat homegrown app icon :]
+- More stuff I'm too lazy to update on README or in screenshots at the moment; hover over things in the UI to get an explanation
 
 ## To Use
 
