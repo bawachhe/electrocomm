@@ -21,9 +21,9 @@
 		"electron-packager": "^15.2.0"
 	},
 	"dependencies": {
-		"@electron/remote": "^1.0.0",
-		"dragula": "^3.7.2",
-		"electron": "^11.2.0",
+		"@electron/remote": "^1.2.0",
+		"dragula": "^3.7.3",
+		"electron": "^13.1.2",
 		"electron-tabs": "^0.15.0"
 	}
 }

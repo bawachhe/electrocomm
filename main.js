@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const main = require('@electron/remote/main');
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const Store = require('./store.js');
 
@@ -34,6 +34,7 @@ function createWindow () {
 		frame: false,
 		icon: path.join(__dirname, 'res/icon.png'),
 		webPreferences: {
+			contextIsolation: false,
 			enableRemoteModule: true,
 			nodeIntegration: true,
 			preload: path.join(__dirname, 'preload.js'),
@@ -58,6 +59,7 @@ function createWindow () {
 			x,
 			y,
 			webPreferences: {
+				contextIsolation: false,
 				enableRemoteModule: true,
 				nodeIntegration: true,
 				preload: path.join(__dirname, 'preload.js'),
@@ -101,6 +103,14 @@ function createWindow () {
 
 	ipcMain.on('close', () => {
 		mainWindow.close();
+	})
+
+	ipcMain.on('crash', (...etc) => {
+		console.debug(etc);
+	})
+
+	ipcMain.on('open-main-dev-tools', () => {
+		mainWindow.webContents.openDevTools();
 	})
 
 	const saveWindowBounds = () => {

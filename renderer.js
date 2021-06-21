@@ -17,6 +17,10 @@ const store = Store.accessStore();
 const tabData = store.get('tabData');
 const activeTab = store.get('activeTab');
 
+window.onerror = function(e) {
+	ipcRenderer.send('crash', e.message, e);
+}
+
 let tabGroup = new TabGroup({
 	ready: (tabGroup) => {
 		let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
@@ -84,6 +88,14 @@ function doGoFwd() {
 	}
 }
 
+const devMenu = remote.Menu.buildFromTemplate([
+	{
+		accelerator: 'Ctrl+F12',
+		label: 'Show Main Dev Console',
+		click() { ipcRenderer.send('open-main-dev-tools') }
+	}
+]);
+
 document.querySelector('button.back').addEventListener('click', () => {
 	doGoBack();
 })
@@ -94,6 +106,9 @@ document.querySelector('button.forward').addEventListener('click', () => {
 
 document.querySelector('button.config').addEventListener('click', () => {
 	ipcRenderer.send('open-config');
+})
+document.querySelector('button.config').addEventListener('contextmenu', () => {
+	devMenu.popup();
 })
 
 document.querySelector('button.minimize').addEventListener('click', () => {
@@ -181,10 +196,31 @@ if (tabData) {
 			webviewAttributes: {
 				partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 				userAgent:
-					tabDatum.customUserAgent ||
-					"Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
+					tabDatum.customUserAgent || "Chrome/90.0.4430.212"
 			}
 		});
+
+		tab.webview.addEventListener('crashed', (e) => {
+			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " crashed.", e);
+		})
+
+		tab.webview.addEventListener('plugin-crashed', (e) => {
+			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " plugin-crashed?", e);
+		})
+
+		tab.webview.addEventListener('destroyed', (e) => {
+			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " destroyed?", e);
+		})
+
+		tab.webview.addEventListener('close', (e) => {
+			webview.src = "about:blank";
+			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " closed itself?", e);
+		})
+
+		tab.webview.addEventListener('did-fail-load', (code, msg, url) => {
+			webview.src = "about:blank";
+			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " closed itself?", code, msg, url);
+		})
 
 		tab.webview.addEventListener('did-start-loading', () => {
 			tab.setBadge('<img src="loading.gif" />');
@@ -208,6 +244,10 @@ if (tabData) {
 		});
 
 		const menu = remote.Menu.buildFromTemplate([
+			{
+				label: 'Show Dev Console',
+				click() { tab.webview.openDevTools() }
+			},
 			{
 				label: 'Reload Tab',
 				click() { tab.webview.reload() }
