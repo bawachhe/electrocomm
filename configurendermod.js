@@ -18,6 +18,7 @@ const protoDiv = document.querySelector('div.proto.single-tab-cfg');
 const tabCfgsDiv = document.querySelector('div.tab-cfgs');
 const tabCfgDeetsDiv = document.querySelector('div.tab-cfg-deets');
 
+const savedSettingsInput = tabCfgDeetsDiv.querySelector('input#savedSettings');
 const srcInput = tabCfgDeetsDiv.querySelector('input#src');
 const customFavIconURLInput = tabCfgDeetsDiv.querySelector('input#customFavIconURL');
 const sessionPartitionInput = tabCfgDeetsDiv.querySelector('input#sessionPartition');
@@ -58,13 +59,21 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 });
 
 document.querySelector('button#undoConfig').addEventListener('click', () => {
-	srcInput.value = savedSettings.src;
-	customFavIconURLInput.value = savedSettings.customFavIconURL;
-	sessionPartitionInput.value = savedSettings.sessionPartition;
-	hostnameWhitelistInput.value = savedSettings.hostnameWhitelist;
-	customUserAgentInput.value = savedSettings.customUserAgent;
-	customCSSTextarea.value = savedSettings.customCSS;
+	const savedSettings = JSON.parse(savedSettingsInput.value);
+
+	loadTabSettings(savedSettings);
 });
+
+function loadTabSettings(savedSettings) {
+	srcInput.value = savedSettings.src || '';
+	customFavIconURLInput.value = savedSettings.customFavIconURL || '';
+	sessionPartitionInput.value = savedSettings.sessionPartition || '';
+	hostnameWhitelistInput.value = savedSettings.hostnameWhitelist || '';
+	customUserAgentInput.value = savedSettings.customUserAgent || '';
+	customCSSTextarea.value = savedSettings.customCSS || '';
+
+	savedSettingsInput.value = JSON.stringify(savedSettings);
+}
 
 document.querySelector('button#closeConfig').addEventListener('click', () => {
 	ipcRenderer.send('close-config');
@@ -75,9 +84,16 @@ function addTabConfig(tabDatum) {
 
 	copySingleTabCfg.classList.remove('proto');
 
-	const tabSettings = copySingleTabCfg.querySelector('input#tabSettings');
+	copySingleTabCfg.querySelector('input#tabSettings').value = JSON.stringify(tabDatum);
 
-	tabSettings.value = JSON.stringify(tabDatum);
+	const nameSpan = copySingleTabCfg.querySelector('span.name');
+
+	if (tabDatum && (tabDatum.customName || tabDatum.autoName)) {
+		nameSpan.innerHTML = tabDatum.customName || tabDatum.autoName;
+	}
+	else {
+		nameSpan.innerHTML = "*New";
+	}
 
 	const delButton = copySingleTabCfg.querySelector('button#deleteTab');
 
@@ -87,6 +103,10 @@ function addTabConfig(tabDatum) {
 		if (tabDatum && tabDatum.src) {
 			ipcRenderer.send('delete-config', tabDatum.src);
 		}
+	});
+
+	copySingleTabCfg.addEventListener('click', () => {
+		loadTabSettings(tabDatum);
 	});
 
 	tabCfgsDiv.appendChild(copySingleTabCfg);
