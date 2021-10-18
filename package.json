@@ -18,12 +18,12 @@
 	"author": "Brent Krone-Schmidt",
 	"license": "CC0-1.0",
 	"devDependencies": {
-		"electron-packager": "^15.2.0"
+		"electron-packager": "^15.4.0"
 	},
 	"dependencies": {
-		"@electron/remote": "^1.2.0",
+		"@electron/remote": "^2.0.0",
 		"dragula": "^3.7.3",
-		"electron": "^13.1.2",
+		"electron": "^15.2.0",
 		"electron-tabs": "^0.15.0"
 	}
 }
