@@ -24,7 +24,7 @@ if (!isSingleInstance) {
 
 function createWindow () {
 	let {width, height, x, y} = store.get('windowBounds');
-	
+
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width,
@@ -41,6 +41,9 @@ function createWindow () {
 			webviewTag: true
 		}
 	})
+
+	// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
+	main.enable(mainWindow.webContents);
 
 	let configWindow;
 
@@ -67,6 +70,10 @@ function createWindow () {
 			}
 		});
 
+		// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
+		main.enable(configWindow.webContents);
+
+
 		configWindow.loadFile('config.html');
 
 		// configWindow.webContents.openDevTools()
@@ -85,7 +92,7 @@ function createWindow () {
 		configWindow = null;
 	});
 
-	ipcMain.on('cancel-config', (e, tabData) => {
+	ipcMain.on('close-config', (e, tabData) => {
 		configWindow.close();
 		configWindow = null;
 	});

@@ -42,7 +42,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 });
 
 document.querySelector('button#cancelConfig').addEventListener('click', () => {
-	ipcRenderer.send('cancel-config');
+	ipcRenderer.send('close-config');
 });
 
 function addTabConfig(tabDatum) {
