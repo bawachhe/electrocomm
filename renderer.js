@@ -7,6 +7,7 @@
 
 const {ipcRenderer} = require('electron');
 const remote = require('@electron/remote');
+const electronRemoteMain = require('@electron/remote/main');
 const TabGroup = require("electron-tabs");
 const dragula = require('dragula');
 const Store = require('./store.js');
@@ -198,6 +199,19 @@ if (tabData) {
 				userAgent:
 					tabDatum.customUserAgent || 
 					"Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212"
+			}
+		});
+
+		tab.on('webview-ready', (tab) => {
+			const webContentsId = tab.webview.getWebContentsId();
+
+			if (webContentsId && !isNaN(webContentsId)) {
+				const tabWebContents = remote.webContents.fromId(webContentsId);
+
+				if (tabWebContents) {
+					// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
+					electronRemoteMain.enable(tabWebContents);
+				}
 			}
 		});
 
