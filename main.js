@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const main = require('@electron/remote/main');
+const electronRemoteMain = require('@electron/remote/main');
 const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const Store = require('./store.js');
@@ -43,7 +43,7 @@ function createWindow () {
 	})
 
 	// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
-	main.enable(mainWindow.webContents);
+	electronRemoteMain.enable(mainWindow.webContents);
 
 	let configWindow;
 
@@ -71,7 +71,7 @@ function createWindow () {
 		});
 
 		// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
-		main.enable(configWindow.webContents);
+		electronRemoteMain.enable(configWindow.webContents);
 
 
 		configWindow.loadFile('config.html');
