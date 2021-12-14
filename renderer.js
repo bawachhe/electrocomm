@@ -146,6 +146,7 @@ function doAddTab(tabDatum) {
 		title: normalizeUrl(tabDatum.src),
 		visible: true,
 		webviewAttributes: {
+			allowpopups: true,
 			partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 			userAgent: tabDatum.customUserAgent || DEFAULT_USERAGENT
 		}
