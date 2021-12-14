@@ -10,50 +10,64 @@ const remote = require('@electron/remote');
 const electronRemoteMain = require('@electron/remote/main');
 const TabGroup = require("electron-tabs");
 const dragula = require('dragula');
-const Store = require('./store.js');
 const normalizeUrl = require('normalize-url');
 
-// Get the stored infos
-const store = Store.accessStore();
+let storeData, tabGroup, tabData, activeTab;
 
-const tabData = store.get('tabData');
-const activeTab = store.get('activeTab');
+ipcRenderer.send('request-store-instance');
+
+ipcRenderer.on('update-local-store-instance', (e, storeDataInstance) => storeData = storeDataInstance);
+
+ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
+	storeData = storeDataInstance;
+
+	tabData = storeData['tabData'];
+	activeTab = storeData['activeTab'];
+
+	tabGroup = new TabGroup({
+		ready: (tabGroup) => {
+			let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
+
+			drake.on('drop', (el, target, source, sibling) => {
+				let tabSrc = el.querySelector('.etabs-tab-title').innerHTML;
+				let siblingSrc;
+
+				if (sibling) {
+					siblingSrc = sibling.querySelector('.etabs-tab-title').innerHTML;
+				}
+
+				let tabIndex, siblingIndex;
+
+				for (let i = 0; i < tabData.length; i++) {
+					if (tabData[i].src == tabSrc) {
+						tabIndex = i;
+					}
+					if (tabData[i].src == siblingSrc) {
+						siblingIndex = i;
+					}
+				}
+
+				tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
+
+				ipcRenderer.send('update-store-tab-data', tabData);
+			});
+		}
+	});
+
+	if (tabData) {
+		tabGroup.on('tab-active', (tab) => {
+			if (tab.tab.id) ipcRenderer.send('update-store-active-tab', tab.tab.id);
+		});
+
+		tabData.forEach((tabDatum) => doAddTab(tabDatum));
+	}
+});
 
 // window.onerror = function(e) {
 // 	ipcRenderer.send('crash', e.message, e);
 // }
 
 const DEFAULT_USERAGENT = 'Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212';
-
-let tabGroup = new TabGroup({
-	ready: (tabGroup) => {
-		let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
-
-		drake.on('drop', (el, target, source, sibling) => {
-			let tabSrc = el.querySelector('.etabs-tab-title').innerHTML;
-			let siblingSrc;
-
-			if (sibling) {
-				siblingSrc = sibling.querySelector('.etabs-tab-title').innerHTML;
-			}
-
-			let tabIndex, siblingIndex;
-
-			for (let i = 0; i < tabData.length; i++) {
-				if (tabData[i].src == tabSrc) {
-					tabIndex = i;
-				}
-				if (tabData[i].src == siblingSrc) {
-					siblingIndex = i;
-				}
-			}
-
-			tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
-
-			store.set('tabData', tabData);
-		});
-	}
-});
 
 ipcRenderer.on('back-or-forward', (e, backOrForward) => {
 	if (backOrForward == 'browser-backward') {
@@ -260,7 +274,7 @@ function doAddTab(tabDatum) {
 				if (tabDatum.autoFavIconURL != e.favicons[0]) {
 					tab.setIcon(e.favicons[0]);
 
-					store.setAutoTabIcon(tabDatum.id, e.favicons[0]);
+					ipcRenderer.send('update-store-auto-tab-icon', tabDatum.id, e.favicons[0]);
 				}
 			}
 		);
@@ -379,11 +393,3 @@ const hiddenAcceleratorOnlyContextMenu = remote.Menu.buildFromTemplate([
 ]);
 
 remote.Menu.setApplicationMenu(hiddenAcceleratorOnlyContextMenu);
-
-if (tabData) {
-	tabGroup.on('tab-active', (tab) => {
-		store.set('activeTab', tab.tab.id);
-	});
-
-	tabData.forEach((tabDatum) => doAddTab(tabDatum));
-}

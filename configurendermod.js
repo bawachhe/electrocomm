@@ -6,7 +6,7 @@
 // process.
 
 const {ipcRenderer} = require('electron');
-const Store = require('./store.js');
+const remote = require('@electron/remote');
 const dragula = require('dragula');
 const querystring = require('querystring');
 const normalizeUrl = require('normalize-url');
@@ -15,7 +15,7 @@ let id;
 
 let idGenerator = Date.now();
 
-let tabData;
+let storeData, tabData;
 
 const mainSection = document.querySelector('main');
 const saveButton = document.querySelector('button#saveConfig');
@@ -45,7 +45,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 				customFavIconURL = 'https://' + customFavIconURL;
 			}
 
-			inputTabData['customFavIconURL'] = normalizeUrl(customFavIconURL);
+			inputTabData['customFavIconURL'] = customFavIconURL ? normalizeUrl(customFavIconURL) : '';
 		}
 
 		if (srcInput.value !== savedSettings.src) {
@@ -55,7 +55,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 				src = 'https://' + src;
 			}
 
-			inputTabData['src'] = normalizeUrl(src);
+			inputTabData['src'] = src ? normalizeUrl(src) : '';
 		}
 
 		if (sessionPartitionInput.value !== savedSettings.sessionPartition) {
@@ -201,18 +201,24 @@ document.querySelector('button.close').addEventListener('click', () => {
 	ipcRenderer.send('close-config');
 })
 
-window.onload = () => {
+ipcRenderer.send('request-store-instance');
 
-	// Get the stored infos
-	const store = Store.accessStore();
+ipcRenderer.on('update-local-store-instance', (e, storeDataInstance) => {
+	storeData = storeDataInstance
+
+	tabData = storeData['tabData'];
+});
+
+ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
+	storeData = storeDataInstance;
 
 	const query = querystring.parse(global.location.search);
 
-	tabData = store.get('tabData');
+	tabData = storeData['tabData'];
 
 	if (tabData && tabData.length > 0)
 		for (let tabDatum of tabData) {
 			addTabConfig(tabDatum);
 		}
 
-};
+});

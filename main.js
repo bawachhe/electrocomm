@@ -116,48 +116,37 @@ function createWindow () {
 	ipcMain.on('save-config', (e, tabDataToSave) => {
 		let oldTabData = store.get('tabData');
 
-		if (tabDataToSave.hasOwnProperty('id')) {
-			let newTabData = [];
+		let newTabData = [];
 
-			if (oldTabData && oldTabData.length > 0)
-				newTabData = JSON.parse(JSON.stringify(oldTabData));
+		if (oldTabData && oldTabData.length > 0)
+			newTabData = JSON.parse(JSON.stringify(oldTabData));
 
-			let dataPreviouslyExists = false;
+		let dataPreviouslyExists = false;
 
-			newTabData = newTabData.map((tabDatum) => {
-				if (tabDatum.id == tabDataToSave.id) {
-					dataPreviouslyExists = true;
+		newTabData = newTabData.map((tabDatum) => {
+			if (tabDatum.id == tabDataToSave.id) {
+				dataPreviouslyExists = true;
 
-					return tabDataToSave;
-				}
-				else
-					return tabDatum;
-			});
-
-			if (!dataPreviouslyExists) {
-				newTabData.push(tabDataToSave);
+				return tabDataToSave;
 			}
+			else
+				return tabDatum;
+		});
 
-			store.set('tabData', newTabData);
+		if (!dataPreviouslyExists) {
+			newTabData.push(tabDataToSave);
+		}
 
-			if (dataPreviouslyExists) {
-				mainWindow.webContents.send('refresh-tab', tabDataToSave);
-			}
-			else {
-				mainWindow.webContents.send('add-tab', tabDataToSave);
-			}
+		store.set('tabData', newTabData);
+
+		if (dataPreviouslyExists) {
+			mainWindow.webContents.send('refresh-tab', tabDataToSave);
 		}
 		else {
-			store.set('tabData', tabDataToSave);
-
-			if (JSON.stringify(tabDataToSave) != JSON.stringify(oldTabData)) {
-				mainWindow.reload();
-			}
-
-			configWindow.close();
-			configWindow = null;
+			mainWindow.webContents.send('add-tab', tabDataToSave);
 		}
 
+		e.sender.send('update-local-store-instance', store.data);
 	});
 
 	ipcMain.on('delete-config', (e, id) => {
@@ -234,6 +223,27 @@ function createWindow () {
 		app.quit();
 	})
 }
+
+ipcMain.on('request-store-instance', (e) => {
+	if (!store) store = Store.accessStore();
+
+	e.sender.send('receive-store-instance', store.data);
+});
+
+ipcMain.on('update-store-auto-tab-icon', (e, tabId, iconURL) => {
+	store.setAutoTabIcon(tabId, iconURL);
+	e.sender.send('update-local-store-instance', store.data);
+});
+
+ipcMain.on('update-store-active-tab', (e, tabId) => {
+	store.set('activeTab', tabId);
+	e.sender.send('update-local-store-instance', store.data);
+});
+
+ipcMain.on('update-store-tab-data', (e, tabData) => {
+	store.set('tabData', tabData);
+	e.sender.send('update-local-store-instance', store.data);
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
