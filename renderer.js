@@ -117,19 +117,39 @@ ipcRenderer.on('remove-tab', (e, id) => {
 	}
 });
 
-function doAddNewWindowListener(tab, tabDatum) {
-	tab.newWindowEventListener = tab.webview.addEventListener('new-window', (e) => {
-		const url = require('url').parse(e.url);
+function getWebContentsVar(tab) {
+	const webContentsId = tab.webview.getWebContentsId();
 
-		if (url.protocol === 'http:' || url.protocol === 'https:') {
-			if (tabDatum.hostnameWhitelist && tabDatum.hostnameWhitelist.indexOf(url.hostname) != -1) {
-				tab.webview.loadURL(e.url);
-			}
-			else {
-				remote.shell.openExternal(e.url);
-			}
+	if (webContentsId && !isNaN(webContentsId)) {
+		const tabWebContents = remote.webContents.fromId(webContentsId);
+
+		if (tabWebContents) {
+			tab.webContents = tabWebContents;
+
+			return tabWebContents;
 		}
-	});
+	}
+
+	return null;
+}
+
+function doAddNewWindowListener(tab, tabDatum) {
+	if (tab.webContents || getWebContentsVar(tab)) {
+		tab.newWindowEventListener = tab.webContents.setWindowOpenHandler(({url}) => {
+			const parsedURL = require('url').parse(url);
+
+			if (parsedURL.protocol === 'http:' || parsedURL.protocol === 'https:') {
+				if (tabDatum.hostnameWhitelist && tabDatum.hostnameWhitelist.indexOf(parsedURL.hostname) != -1) {
+					tab.webview.loadURL(url);
+				}
+				else {
+					remote.shell.openExternal(url);
+				}
+			}
+
+			return { action: 'deny' };
+		});
+	}
 }
 
 function doAddTab(tabDatum) {
@@ -146,6 +166,7 @@ function doAddTab(tabDatum) {
 		title: normalizeUrl(tabDatum.src),
 		visible: true,
 		webviewAttributes: {
+			allowpopups: true,
 			partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
 			userAgent: tabDatum.customUserAgent || DEFAULT_USERAGENT
 		}
@@ -160,15 +181,11 @@ function doAddTab(tabDatum) {
 	tab.tab.id = tabDatum.id;
 
 	tab.on('webview-ready', (tab) => {
-		const webContentsId = tab.webview.getWebContentsId();
+		if (getWebContentsVar(tab)) {
+			doAddNewWindowListener(tab, tabDatum);
 
-		if (webContentsId && !isNaN(webContentsId)) {
-			const tabWebContents = remote.webContents.fromId(webContentsId);
-
-			if (tabWebContents) {
-				// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
-				electronRemoteMain.enable(tabWebContents);
-			}
+			// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
+			electronRemoteMain.enable(tab.webContents);
 		}
 	});
 
@@ -205,8 +222,6 @@ function doAddTab(tabDatum) {
 	tab.webview.addEventListener('did-stop-loading', () => {
 		tab.setBadge();
 	})
-
-	doAddNewWindowListener(tab, tabDatum);
 
 	const menu = remote.Menu.buildFromTemplate([
 		{
