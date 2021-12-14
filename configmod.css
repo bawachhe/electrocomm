@@ -1,0 +1,81 @@
+.button-bar {
+	display: flex;
+	height: 50px;
+	width: 100%;
+	-webkit-app-region: drag;
+}
+
+.button-bar button {
+	-webkit-app-region: no-drag;
+}
+
+.button-bar button[disabled] {
+	background-color: #333;
+	opacity: 0.3;
+}
+
+.button-bar .left {
+	flex-grow: 1;
+}
+
+.button-bar .right {
+	position: relative;
+	right: 0;
+}
+
+.button-bar .close.config {
+	position: relative;
+}
+
+main {
+	display: flex;
+	height: calc(100vh - 66px);
+	width: 100%;
+}
+
+.tab-cfg-side {
+	border-right: 1px solid #444;
+	height: 100%;
+	margin-right: 10px;
+	padding-right: 10px;
+	width: 30%;
+}
+
+.tab-cfg-side .tab-cfgs {
+	height: 100%;
+	max-height: 100%;
+}
+
+.tab-cfg-side .tab-cfgs .proto.single-tab-cfg {
+	display: none;
+}
+
+.tab-cfg-side .tab-cfgs .single-tab-cfg {
+	cursor: pointer;
+	display: flex;
+}
+
+.tab-cfg-side .tab-cfgs .single-tab-cfg.active {
+	background-color: #777;
+}
+.tab-cfg-side .tab-cfgs .single-tab-cfg:hover {
+	background-color: #AAA;
+}
+
+.tab-cfg-side .tab-cfgs .single-tab-cfg .name {
+	flex-grow: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tab-cfg-deets > * {
+	display: block;
+}
+
+.tab-cfg-deets.dim {
+	opacity: 0.3;
+}
+
+.tab-cfg-deets.dim input {
+	pointer-events: none;
+}

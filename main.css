@@ -3,7 +3,6 @@ html {
 	background: #222;
 	color: #eee;
 	font-family: "Open Sans", "Noto Sans", sans;
-	height: calc(100vh - 15px);
 	overflow: hidden;
 }
 

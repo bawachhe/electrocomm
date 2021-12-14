@@ -22,6 +22,38 @@ if (!isSingleInstance) {
 	app.quit();
 }
 
+function init() {
+	updateStore();
+	createWindow();
+}
+
+function updateStore() {
+	const storeVersion = store.get('version');
+
+	if (storeVersion && storeVersion >= 1)
+		return;
+
+	if (!storeVersion || storeVersion < 1) {
+		const tabData = store.get('tabData');
+
+		if (tabData) {
+			let idGenerator = Date.now();
+
+			tabData.map((tabDatum) => {
+				if (tabDatum && !tabDatum.id) {
+					tabDatum.id = idGenerator++;
+				}
+
+				return tabDatum;
+			});
+
+			store.set('tabData', tabData);
+		}
+
+		store.set('version', 1);
+	}
+}
+
 function createWindow () {
 	let {width, height, x, y} = store.get('windowBounds');
 
@@ -47,7 +79,7 @@ function createWindow () {
 
 	let configWindow;
 
-	ipcMain.on('open-config', () => {
+	ipcMain.on('open-config', (e, id) => {
 		const mainWindowBounds = mainWindow.getBounds();
 
 		const x = mainWindowBounds['x'] + ((mainWindowBounds['width'] / 2) - 400);
@@ -73,26 +105,75 @@ function createWindow () {
 		// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
 		electronRemoteMain.enable(configWindow.webContents);
 
-
-		configWindow.loadFile('config.html');
+		if (id && !isNaN(id))
+			configWindow.loadFile('configmod.html', {query: {"id": id }});
+		else
+			configWindow.loadFile('configmod.html', {query: {"id": 1, "moredata":"hello" }});
 
 		// configWindow.webContents.openDevTools()
 	});
 
-	ipcMain.on('save-config', (e, tabData) => {
+	ipcMain.on('save-config', (e, tabDataToSave) => {
 		let oldTabData = store.get('tabData');
 
-		store.set('tabData', tabData);
+		if (tabDataToSave.hasOwnProperty('id')) {
+			let newTabData = [];
 
-		if (JSON.stringify(tabData) != JSON.stringify(oldTabData)) {
-			mainWindow.reload();
+			if (oldTabData && oldTabData.length > 0)
+				newTabData = JSON.parse(JSON.stringify(oldTabData));
+
+			let dataPreviouslyExists = false;
+
+			newTabData = newTabData.map((tabDatum) => {
+				if (tabDatum.id == tabDataToSave.id) {
+					dataPreviouslyExists = true;
+
+					return tabDataToSave;
+				}
+				else
+					return tabDatum;
+			});
+
+			if (!dataPreviouslyExists) {
+				newTabData.push(tabDataToSave);
+			}
+
+			store.set('tabData', newTabData);
+
+			if (dataPreviouslyExists) {
+				mainWindow.webContents.send('refresh-tab', tabDataToSave);
+			}
+			else {
+				mainWindow.webContents.send('add-tab', tabDataToSave);
+			}
+		}
+		else {
+			store.set('tabData', tabDataToSave);
+
+			if (JSON.stringify(tabDataToSave) != JSON.stringify(oldTabData)) {
+				mainWindow.reload();
+			}
+
+			configWindow.close();
+			configWindow = null;
 		}
 
-		configWindow.close();
-		configWindow = null;
 	});
 
-	ipcMain.on('close-config', (e, tabData) => {
+	ipcMain.on('delete-config', (e, id) => {
+		let tabData = store.get('tabData');
+
+		if (tabData) {
+			tabData = tabData.filter((tabDatum) => tabDatum.id != id);
+
+			store.set('tabData', tabData);
+
+			mainWindow.webContents.send('remove-tab', id);
+		}
+
+	});
+
+	ipcMain.on('close-config', () => {
 		configWindow.close();
 		configWindow = null;
 	});
@@ -157,7 +238,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', init)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

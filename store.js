@@ -24,25 +24,32 @@ class Store {
 		const userDataPath = (electron.app || require('@electron/remote').app).getPath('userData');
 		// We'll use the `configName` property to set the file name and path.join to bring it all together as a string
 		this.path = path.join(userDataPath, 'user-preferences.json');
-		
+
 		this.data = parseDataFile(this.path, _DEFAULTS);
 	}
-	
+
 	get(key) {
 		return this.data[key];
 	}
-	
+
 	set(key, val) {
 		this.data[key] = val;
 		fs.writeFileSync(this.path, JSON.stringify(this.data));
 	}
 
-	setAutoTabIcon(tabIndex, url) {
+	setAutoTabIcon(id, url) {
 		let tabData = this.data['tabData'];
 
 		if (tabData) {
-			tabData[tabIndex].autoFavIconURL = url;
-			fs.writeFileSync(this.path, JSON.stringify(this.data));
+			tabData.map((tabDatum) => {
+				if (tabDatum.id == id) {
+					tabDatum.autoFavIconURL = url;
+				}
+
+				return tabDatum;
+			});
+
+			this.set('tabData', tabData);
 		}
 	}
 }

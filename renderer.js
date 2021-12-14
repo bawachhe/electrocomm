@@ -11,6 +11,7 @@ const electronRemoteMain = require('@electron/remote/main');
 const TabGroup = require("electron-tabs");
 const dragula = require('dragula');
 const Store = require('./store.js');
+const normalizeUrl = require('normalize-url');
 
 // Get the stored infos
 const store = Store.accessStore();
@@ -21,6 +22,8 @@ const activeTab = store.get('activeTab');
 // window.onerror = function(e) {
 // 	ipcRenderer.send('crash', e.message, e);
 // }
+
+const DEFAULT_USERAGENT = 'Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212';
 
 let tabGroup = new TabGroup({
 	ready: (tabGroup) => {
@@ -52,7 +55,7 @@ let tabGroup = new TabGroup({
 	}
 });
 
-ipcRenderer.on('back-or-forward', function(event, backOrForward) {
+ipcRenderer.on('back-or-forward', (e, backOrForward) => {
 	if (backOrForward == 'browser-backward') {
 		doGoBack();
 	}
@@ -60,6 +63,189 @@ ipcRenderer.on('back-or-forward', function(event, backOrForward) {
 		doGoFwd();
 	}
 });
+
+ipcRenderer.on('add-tab', (e, tabDatum) => doAddTab(tabDatum));
+
+ipcRenderer.on('refresh-tab', (e, tabDatum) => {
+	if (tabGroup && tabDatum.id) {
+		for (let tab of tabGroup.getTabs()) {
+			if (tab && tab.tab && tab.tab.id && tab.tab.id == tabDatum.id) {
+				tab.setIcon(tabDatum.customFavIconURL ? normalizeUrl(tabDatum.customFavIconURL) : tabDatum.autoFavIconURL);
+
+				if (normalizeUrl(tab.webview.src) != normalizeUrl(tabDatum.src)) {
+					tab.webview.loadURL(tabDatum.src);
+					tab.setTitle(tabDatum.src);
+				}
+
+				if (tab.webview.partition != tabDatum.sessionPartition) {
+					tab.webview.partition = tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : '';
+				}
+
+				if (tabDatum.customUserAgent && (tab.webview.useragent != tabDatum.customUserAgent)) {
+					tab.webview.useragent =  tabDatum.customUserAgent || DEFAULT_USERAGENT
+				}
+
+				if (tab.cssKey) {
+					tab.webview.removeInsertedCSS(tab.cssKey).then(() => {
+						if (tabDatum.customCSS) {
+							tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
+						}
+					});
+				}
+
+				if (tab.newWindowEventListener) {
+					tab.webview.removeEventListener('new-window', tab.newWindowEventListener);
+				}
+
+				doAddNewWindowListener(tab, tabDatum);
+
+				break;
+			}
+		}
+	}
+});
+
+ipcRenderer.on('remove-tab', (e, id) => {
+	if (tabGroup) {
+		for (let tab of tabGroup.getTabs()) {
+			if (tab && tab.tab && tab.tab.id && tab.tab.id == id) {
+				tab.close();
+
+				break;
+			}
+		}
+	}
+});
+
+function doAddNewWindowListener(tab, tabDatum) {
+	tab.newWindowEventListener = tab.webview.addEventListener('new-window', (e) => {
+		const url = require('url').parse(e.url);
+
+		if (url.protocol === 'http:' || url.protocol === 'https:') {
+			if (tabDatum.hostnameWhitelist && tabDatum.hostnameWhitelist.indexOf(url.hostname) != -1) {
+				tab.webview.loadURL(e.url);
+			}
+			else {
+				remote.shell.openExternal(e.url);
+			}
+		}
+	});
+}
+
+function doAddTab(tabDatum) {
+	let src = tabDatum.src;
+
+	if (src && !src.match(/^https?:\/\//)) {
+		src = "https://" + src;
+	}
+
+	let tab = tabGroup.addTab({
+		active: (tabDatum.id == activeTab),
+		iconURL: tabDatum.customFavIconURL ? normalizeUrl(tabDatum.customFavIconURL) : tabDatum.autoFavIconURL,
+		src: normalizeUrl(tabDatum.src),
+		title: normalizeUrl(tabDatum.src),
+		visible: true,
+		webviewAttributes: {
+			partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
+			userAgent: tabDatum.customUserAgent || DEFAULT_USERAGENT
+		}
+	});
+
+	if (tabDatum.customCSS) {
+		tab.webview.addEventListener('dom-ready', () => {
+			tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
+		});
+	}
+
+	tab.tab.id = tabDatum.id;
+
+	tab.on('webview-ready', (tab) => {
+		const webContentsId = tab.webview.getWebContentsId();
+
+		if (webContentsId && !isNaN(webContentsId)) {
+			const tabWebContents = remote.webContents.fromId(webContentsId);
+
+			if (tabWebContents) {
+				// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
+				electronRemoteMain.enable(tabWebContents);
+			}
+		}
+	});
+
+	tab.webview.addEventListener('crashed', (e) => {
+		console.log("oshi-, " + tabDatum.src + " crashed.", e);
+		ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " crashed.", e);
+	})
+
+	tab.webview.addEventListener('plugin-crashed', (e) => {
+		console.log("oshi-, " + tabDatum.src + " plugin-crashed?", e);
+		ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " plugin-crashed?", e);
+	})
+
+	tab.webview.addEventListener('destroyed', (e) => {
+		console.log("oshi-, " + tabDatum.src + " destroyed?", e);
+		ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " destroyed?", e);
+	})
+
+	tab.webview.addEventListener('close', (e) => {
+		console.log("oshi-, " + tabDatum.src + " closed itself?", e);
+		tab.webview.src = "about:blank";
+		ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " closed itself?", e);
+	})
+
+	// tab.webview.addEventListener('did-fail-load', (code, msg, url) => {
+	// 	console.log("oshi-, " + tabDatum.src + " failed to load?", JSON.stringify({code, msg, url}));
+	// 	ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " failed to load?", JSON.stringify({code, msg, url}));
+	// })
+
+	tab.webview.addEventListener('did-start-loading', () => {
+		tab.setBadge('<img src="loading.gif" />');
+	})
+
+	tab.webview.addEventListener('did-stop-loading', () => {
+		tab.setBadge();
+	})
+
+	doAddNewWindowListener(tab, tabDatum);
+
+	const menu = remote.Menu.buildFromTemplate([
+		{
+			label: 'Show Dev Console',
+			click() { tab.webview.openDevTools() }
+		},
+		{
+			label: 'Reload Tab',
+			click() { tab.webview.reload() }
+		},
+		{
+			label: 'Forget Tab Sessions/Cookies',
+			click() {
+				remote.session.defaultSession.clearStorageData({origin: tabDatum.src});
+
+				if (tabDatum.sessionPartition) {
+					remote.session.fromPartition("persist:" + tabDatum.sessionPartition).clearStorageData();
+				}
+			}
+		}
+	]);
+
+	tab.tab.addEventListener('contextmenu', () => {
+		menu.popup()
+	}, false)
+
+	if (!tabDatum.customFavIconURL) {
+		tab.webview.addEventListener(
+			'page-favicon-updated',
+			(e) => {
+				if (tabDatum.autoFavIconURL != e.favicons[0]) {
+					tab.setIcon(e.favicons[0]);
+
+					store.setAutoTabIcon(tabDatum.id, e.favicons[0]);
+				}
+			}
+		);
+	}
+}
 
 function doGoBack() {
 	if (tabGroup) {
@@ -176,124 +362,8 @@ remote.Menu.setApplicationMenu(hiddenAcceleratorOnlyContextMenu);
 
 if (tabData) {
 	tabGroup.on('tab-active', (tab) => {
-		store.set('activeTab', tab.webviewAttributes.src);
+		store.set('activeTab', tab.tab.id);
 	});
 
-	for (let tabIndex in tabData) {
-		const tabDatum = tabData[tabIndex];
-
-		let src = tabDatum.src;
-
-		if (!src.match(/^https?:\/\//)) {
-			src = "https://" + src;
-		}
-
-		let tab = tabGroup.addTab({
-			active: (tabDatum.src == activeTab),
-			iconURL: tabDatum.customFavIconURL || tabDatum.autoFavIconURL,
-			src: tabDatum.src,
-			title: tabDatum.src,
-			visible: true,
-			webviewAttributes: {
-				partition: (tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : ''),
-				userAgent:
-					tabDatum.customUserAgent || 
-					"Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212"
-			}
-		});
-
-		tab.on('webview-ready', (tab) => {
-			const webContentsId = tab.webview.getWebContentsId();
-
-			if (webContentsId && !isNaN(webContentsId)) {
-				const tabWebContents = remote.webContents.fromId(webContentsId);
-
-				if (tabWebContents) {
-					// @electron/remote is disabled for this WebContents. Call require("@electron/remote/main").enable(webContents) to enable it.
-					electronRemoteMain.enable(tabWebContents);
-				}
-			}
-		});
-
-		tab.webview.addEventListener('crashed', (e) => {
-			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " crashed.", e);
-		})
-
-		tab.webview.addEventListener('plugin-crashed', (e) => {
-			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " plugin-crashed?", e);
-		})
-
-		tab.webview.addEventListener('destroyed', (e) => {
-			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " destroyed?", e);
-		})
-
-		tab.webview.addEventListener('close', (e) => {
-			webview.src = "about:blank";
-			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " closed itself?", e);
-		})
-
-		tab.webview.addEventListener('did-fail-load', (code, msg, url) => {
-			webview.src = "about:blank";
-			ipcRenderer.send('crash', "oshi-, " + tabDatum.src + " closed itself?", code, msg, url);
-		})
-
-		tab.webview.addEventListener('did-start-loading', () => {
-			tab.setBadge('<img src="loading.gif" />');
-		})
-
-		tab.webview.addEventListener('did-stop-loading', () => {
-			tab.setBadge();
-		})
-
-		tab.webview.addEventListener('new-window', (e) => {
-			const url = require('url').parse(e.url);
-
-			if (url.protocol === 'http:' || url.protocol === 'https:') {
-				if (tabDatum.hostnameWhitelist && tabDatum.hostnameWhitelist.indexOf(url.hostname) != -1) {
-					tab.webview.loadURL(e.url);
-				}
-				else {
-					remote.shell.openExternal(e.url);
-				}
-			}
-		});
-
-		const menu = remote.Menu.buildFromTemplate([
-			{
-				label: 'Show Dev Console',
-				click() { tab.webview.openDevTools() }
-			},
-			{
-				label: 'Reload Tab',
-				click() { tab.webview.reload() }
-			},
-			{
-				label: 'Forget Tab Sessions/Cookies',
-				click() {
-					remote.session.defaultSession.clearStorageData({origin: tabDatum.src});
-
-					if (tabDatum.sessionPartition) {
-						remote.session.fromPartition("persist:" + tabDatum.sessionPartition).clearStorageData();
-					}
-				}
-			}
-		]);
-
-		tab.tab.addEventListener('contextmenu', () => {
-			menu.popup()
-		}, false)
-
-		if (!tabDatum.customFavIconURL) {
-			tab.webview.addEventListener(
-				'page-favicon-updated',
-				(e) => {
-					if (tabDatum.autoFavIconURL != e.favicons[0]) {
-						tab.setIcon(e.favicons[0]);
-
-						store.setAutoTabIcon(tabIndex, e.favicons[0]);
-					}
-				}
-			);
-		}
-	}
+	tabData.forEach((tabDatum) => doAddTab(tabDatum));
 }
