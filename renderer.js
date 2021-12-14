@@ -77,9 +77,9 @@ ipcRenderer.on('refresh-tab', (e, tabDatum) => {
 					tab.setTitle(tabDatum.src);
 				}
 
-				if (tab.webview.partition != tabDatum.sessionPartition) {
-					tab.webview.partition = tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : '';
-				}
+				// if (tab.webview.partition != tabDatum.sessionPartition) {
+				// 	tab.webview.partition = tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : '';
+				// }
 
 				if (tabDatum.customUserAgent && (tab.webview.useragent != tabDatum.customUserAgent)) {
 					tab.webview.useragent =  tabDatum.customUserAgent || DEFAULT_USERAGENT
@@ -91,6 +91,11 @@ ipcRenderer.on('refresh-tab', (e, tabDatum) => {
 							tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
 						}
 					});
+				}
+				else {
+					if (tabDatum.customCSS) {
+						tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
+					}
 				}
 
 				if (tab.newWindowEventListener) {
