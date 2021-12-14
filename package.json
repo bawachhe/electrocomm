@@ -23,7 +23,8 @@
 	"dependencies": {
 		"@electron/remote": "^2.0.0",
 		"dragula": "^3.7.3",
-		"electron": "^15.2.0",
-		"electron-tabs": "^0.15.0"
+		"electron": "^16.0.0",
+		"electron-tabs": "^0.15.0",
+		"normalize-url": "^4.0.0"
 	}
 }
