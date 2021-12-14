@@ -37,6 +37,7 @@ main {
 	border-right: 1px solid #444;
 	height: 100%;
 	margin-right: 10px;
+	overflow: auto;
 	padding-right: 10px;
 	width: 30%;
 }
@@ -66,6 +67,10 @@ main {
 	flex-grow: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.tab-cfg-deets {
+	overflow: auto;
 }
 
 .tab-cfg-deets > * {

@@ -82,8 +82,8 @@ function createWindow () {
 	ipcMain.on('open-config', (e, id) => {
 		const mainWindowBounds = mainWindow.getBounds();
 
-		const x = mainWindowBounds['x'] + ((mainWindowBounds['width'] / 2) - 400);
-		const y = mainWindowBounds['y'] + ((mainWindowBounds['height'] / 2) - 250);
+		const x = Math.round(mainWindowBounds['x'] + ((mainWindowBounds['width'] / 2) - 600));
+		const y = Math.round(mainWindowBounds['y'] + ((mainWindowBounds['height'] / 2) - 300));
 
 		configWindow = new BrowserWindow({
 			parent: mainWindow,
