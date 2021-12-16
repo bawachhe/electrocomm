@@ -1,6 +1,15 @@
+body {
+	border-radius: 5px;
+	border: 1px solid #555;
+	height: 99.5vh;
+	margin: 0;
+}
+
 .button-bar {
+	border-bottom: 1px solid #363738;
 	display: flex;
 	height: 50px;
+	padding-bottom: 5px;
 	width: 100%;
 	-webkit-app-region: drag;
 }
@@ -10,7 +19,7 @@
 }
 
 .button-bar button[disabled] {
-	background-color: #333;
+	background-color: #454a4e99;
 	opacity: 0.3;
 }
 
@@ -23,13 +32,21 @@
 	right: 0;
 }
 
+.button-bar #addTab {
+	height: 32px;
+	margin-left: 10px;
+	margin-top: 12px;
+	width: 32px;
+}
+
 .button-bar .close.config {
 	position: relative;
 }
 
 main {
 	display: flex;
-	height: calc(100vh - 66px);
+	height: calc(100vh - 77px);
+	margin: 10px;
 	width: 100%;
 }
 
@@ -52,20 +69,23 @@ main {
 }
 
 .tab-cfg-side .tab-cfgs .single-tab-cfg {
+	align-items: center;
+	border-radius: 3px;
 	cursor: pointer;
 	display: flex;
 }
 
 .tab-cfg-side .tab-cfgs .single-tab-cfg.active {
-	background-color: #777;
+	background-color: #575b64;
 }
 .tab-cfg-side .tab-cfgs .single-tab-cfg:hover {
-	background-color: #AAA;
+	background-color: #a1adb4;
 }
 
 .tab-cfg-side .tab-cfgs .single-tab-cfg .name {
 	flex-grow: 1;
 	overflow: hidden;
+	padding: 4px;
 	text-overflow: ellipsis;
 }
 

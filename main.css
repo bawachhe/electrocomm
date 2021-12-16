@@ -1,13 +1,18 @@
 /* general */
 html {
-	background: #222;
+	background: #1a1d21;
 	color: #eee;
 	font-family: "Open Sans", "Noto Sans", sans;
 	overflow: hidden;
 }
 
+body {
+	margin: 0;
+	padding: 5px;
+}
+
 button {
-	background-color: #0042a5;
+	background-color: #0a487a;
 	border: none;
 	border-radius: 3px;
 	color: #eee;
@@ -38,7 +43,7 @@ button.back, button.forward, button.config, button.minimize, button.maximize, bu
 	-webkit-app-region: no-drag;
 }
 button.back:hover, button.forward:hover, button.config:hover, button.minimize:hover, button.maximize:hover, button.close:hover {
-	background: #333;
+	background: #36373899;
 }
 button.back svg, button.forward svg, button.minimize svg, button.maximize svg, button.close svg {
 	height: 100%;
@@ -94,7 +99,6 @@ div.header-bg {
 /* electron tabs */
 
 .etabs-tabgroup {
-	background-color: #222;
 	width: 100%;
 	height: 42px;
 	cursor: default;
@@ -112,7 +116,7 @@ div.header-bg {
 }
 
 .etabs-tab {
-	background-color: #555;
+	background-color: #383b3f99;
 	border: none;
 	border-radius: 10px 10px 0 0;
 	cursor: default;
@@ -132,7 +136,7 @@ div.header-bg {
 }
 
 .etabs-tab.active {
-	background-color: #58c;
+	background-color: #1b609999;
 }
 
 .etabs-tab.loading {
@@ -140,7 +144,7 @@ div.header-bg {
 }
 
 .etabs-tab.flash {
-	background: linear-gradient(to bottom, rgba(255,243,170,1) 0%,rgba(255,227,37,1) 100%);
+	background: linear-gradient(to bottom, #e1ffaa 0%,#d0ff25 100%);
 }
 
 .etabs-buttons {
@@ -186,7 +190,8 @@ div.header-bg {
 .etabs-views {
 	position: relative;
 	border-top: 1px solid #aaa;
-	height: calc(100vh - 60px);
+	height: calc(100vh - 65px);
+	padding-top: 5px;
 }
 
 .etab-view {
