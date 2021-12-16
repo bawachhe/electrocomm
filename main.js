@@ -190,6 +190,10 @@ function createWindow () {
 		mainWindow.webContents.openDevTools();
 	})
 
+	ipcMain.on('open-config-dev-tools', () => {
+		configWindow.webContents.openDevTools();
+	})
+
 	const saveWindowBounds = () => {
 		// The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
 		// the height, width, and x and y coordinates.

@@ -121,6 +121,18 @@ function loadTabSettings(savedSettings) {
 	savedSettingsInput.value = JSON.stringify(savedSettings);
 }
 
+const configDevMenu = remote.Menu.buildFromTemplate([
+	{
+		accelerator: 'Ctrl+Alt+F12',
+		label: 'Show Config Dev Console',
+		click() { ipcRenderer.send('open-config-dev-tools') }
+	}
+]);
+
+document.querySelector('button#closeConfig').addEventListener('contextmenu', () => {
+	configDevMenu.popup();
+});
+
 document.querySelector('button#closeConfig').addEventListener('click', () => {
 	ipcRenderer.send('close-config');
 });
