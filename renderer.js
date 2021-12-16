@@ -29,20 +29,20 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 			let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
 
 			drake.on('drop', (el, target, source, sibling) => {
-				let tabSrc = el.querySelector('.etabs-tab-title').innerHTML;
-				let siblingSrc;
+				let tabId = el.id;
+				let siblingId;
 
 				if (sibling) {
-					siblingSrc = sibling.querySelector('.etabs-tab-title').innerHTML;
+					siblingId = sibling.id;
 				}
 
 				let tabIndex, siblingIndex;
 
 				for (let i = 0; i < tabData.length; i++) {
-					if (tabData[i].src == tabSrc) {
+					if (tabData[i].id == tabId) {
 						tabIndex = i;
 					}
-					if (tabData[i].src == siblingSrc) {
+					if (tabData[i].id == siblingId) {
 						siblingIndex = i;
 					}
 				}
