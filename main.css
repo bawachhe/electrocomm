@@ -79,25 +79,6 @@ button.close {
 	right: 5px;
 }
 
-
-span.handle {
-	display: inline-block;
-	height: 24px;
-	padding: 5px;
-	margin: 5px;
-	width: 24px;
-}
-span.handle svg {
-	height: 100%;
-	width: 100%;
-}
-span.handle svg polygon {
-	fill: #666;
-}
-span.handle svg line {
-	stroke: #666;
-}
-
 button.delete-tab {
 	height: 24px;
 	padding: 0;

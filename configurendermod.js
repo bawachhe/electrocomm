@@ -7,7 +7,6 @@
 
 const {ipcRenderer} = require('electron');
 const remote = require('@electron/remote');
-const dragula = require('dragula');
 const querystring = require('querystring');
 const normalizeUrl = require('normalize-url');
 
@@ -182,20 +181,6 @@ document.querySelector('button#addTab').addEventListener('click', () => {
 
 	loadTabSettings(tabDatum);
 });
-
-dragula(
-	[tabCfgsDiv],
-	{
-		direction: 'vertical',
-		invalid: (el, handle) => {
-			for (; handle && handle.classList && !handle.classList.contains('single-tab-cfg'); handle = handle.parentNode)
-				if (handle.classList.contains('handle'))
-					return false;
-
-			return true;
-		}
-	}
-);
 
 document.querySelector('button.close').addEventListener('click', () => {
 	ipcRenderer.send('close-config');
