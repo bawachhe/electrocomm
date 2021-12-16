@@ -69,6 +69,23 @@ main {
 	text-overflow: ellipsis;
 }
 
+.tab-cfg-side .tab-cfgs .single-tab-cfg button.delete-tab {
+	background-color: #600;
+	max-height: 20px;
+	max-width: 20px;
+	min-height: 20px;
+	min-width: 20px;
+	height: 20px;
+	padding: 0;
+	width: 20px;
+}
+
+.tab-cfg-side .tab-cfgs .single-tab-cfg button.delete-tab svg line {
+	stroke: #fff;
+	stroke-linecap: round;
+	stroke-width: 3;
+}
+
 .tab-cfg-deets {
 	overflow: auto;
 }

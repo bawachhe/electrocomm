@@ -79,53 +79,6 @@ button.close {
 	right: 5px;
 }
 
-button.delete-tab {
-	height: 24px;
-	padding: 0;
-	width: 24px;
-}
-button.delete-tab svg line {
-	stroke: #fff;
-	stroke-linecap: round;
-	stroke-width: 3;
-}
-
-div.proto.single-tab-cfg {
-	display: none;
-}
-
-div.tab-cfg-headers {
-	display: grid;
-	font-size: 12px;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 40px;
-	place-items: center;
-	-webkit-app-region: drag;
-}
-
-div.tab-cfg-headers span {
-	color: #eee;
-	display: inline-block;
-	padding: 5px;
-	margin: 5px;
-}
-
-div.tab-cfgs {
-	max-height: 400px;
-	overflow-x: hidden;
-	overflow-y: auto;
-}
-
-div.tab-cfgs div.single-tab-cfg {
-	display: grid;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 40px;
-	place-items: center;
-}
-
-div.tab-cfgs div.single-tab-cfg input {
-	height: 30px;
-	min-width: 100px;
-}
-
 div.header-bg {
 	background-color: transparent;
 	content: ' ';
