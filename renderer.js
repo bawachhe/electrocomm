@@ -274,6 +274,8 @@ function doAddTab(tabDatum) {
 				if (tabDatum.autoFavIconURL != e.favicons[0]) {
 					tab.setIcon(e.favicons[0]);
 
+					tabDatum.autoFavIconURL = e.favicons[0];
+
 					ipcRenderer.send('update-store-auto-tab-icon', tabDatum.id, e.favicons[0]);
 				}
 			}
