@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const electronRemoteMain = require('@electron/remote/main');
-const {app, BrowserWindow, ipcMain, Menu} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, nativeTheme} = require('electron');
 const path = require('path');
 const Store = require('./store.js');
 
@@ -23,6 +23,8 @@ if (!isSingleInstance) {
 }
 
 function init() {
+	nativeTheme.themeSource = 'dark';
+
 	updateStore();
 	createWindow();
 }
@@ -65,6 +67,7 @@ function createWindow () {
 		y,
 		frame: false,
 		icon: path.join(__dirname, 'res/icon.png'),
+		darkTheme: true,
 		webPreferences: {
 			contextIsolation: false,
 			enableRemoteModule: true,
