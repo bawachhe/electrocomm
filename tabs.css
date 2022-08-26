@@ -1,0 +1,132 @@
+/* electron tabs */
+
+:host {
+	--tabgroup-background: #1a1d21;
+	/* --tab-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+	/* --tab-font-size: 13px; */
+	--tab-background: #383b3f99;
+	/* --tab-color: #696a6c; */
+	--tab-border-color: transparent;
+	--tab-transition: background-color 200ms ease-out, color 200ms ease-out;
+	--tab-cursor: default;
+	/* --tab-active-color: currentcolor; */
+	--tab-active-background: #1b609999;
+	/* --tab-hover-color: currentcolor; */
+	--tab-hover-background: #34a2fc99;
+	/* --button-font-size: 15px; */
+	/* --button-background: none; */
+	/* --button-color: #696a6c; */
+	/* --button-hover-background: #dadce0; */
+	/* --button-hover-color: #383a3e; */
+	/* --button-border-radius: 50%; */
+	/* --button-cursor: pointer; */
+	--badge-background: transparent;
+	--badge-color: #fff;
+	--close-button-visibility: hidden;
+}
+
+.etabs {
+	width: 100%;
+	height: 42px;
+	cursor: default;
+	font: caption;
+	font-size: 14px;
+}
+
+/* Tabs //////////////////////////////////////////////////////////////////////*/
+
+.etabs .nav {
+	height: 46px;
+}
+
+.etabs .nav .tabs {
+	-webkit-app-region: no-drag;
+	display: flex;
+}
+
+.etabs .nav .tabs .tab {
+	border: none;
+	border-radius: 10px 10px 0 0;
+	height: 44px;
+	padding: 6px 8px 0;
+	position: relative;
+	margin: 2px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.etabs .nav .tabs .tab.active {
+	border-bottom: 3px solid #3a9ef1;
+	height: 46px;
+}
+
+.etabs .nav .tabs .tab.visible:not(.active),
+.etabs .nav .tabs .tab.visible:not(.active) +
+	.etabs .nav .tabs .tab.visible:not(.active) {
+
+	border: none;
+}
+
+.etabs .nav .tabs .tab.active:hover {
+	background-color: var(--tab-hover-background);
+}
+
+.etabs .nav .tabs .tab.loading {
+	border-bottom: 3px dashed #2B2;
+}
+
+.etabs .nav .tabs .tab.flash {
+	background: linear-gradient(to bottom, #e1ffaa 0%,#d0ff25 100%);
+}
+
+.etabs .nav .tabs .tab .tab-icon {
+	display: inline-block;
+	height: 32px;
+	padding: 6px 0;
+	width: 32px;
+}
+
+.etabs .nav .tabs .tab .tab-icon img {
+	bottom: 0;
+	left: 0;
+	max-width: 32px;
+	max-height: 32px;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.etabs .nav .tabs .tab .tab-title {
+	display: none;
+}
+
+.etabs .nav .tabs .tab .tab-badge {
+	height: 30px;
+	padding: 0;
+	position: absolute;
+	right: -6px;
+	top: -6px;
+	width: 30px;
+}
+
+.etabs .nav .tabs .tab .tab-badge img {
+	height: 100%;
+	width: 100%;
+}
+
+.etabs .nav .tabs .tab .tab-close {
+	display: none;
+}
+
+/* Views /////////////////////////////////////////////////////////////////////*/
+
+.etabs .views {
+	border-top: 1px solid #aaa;
+	height: calc(100vh - 65px);
+	padding-top: 5px;
+}
+
+/* .etabs .views .view {
+	position: relative;
+} */

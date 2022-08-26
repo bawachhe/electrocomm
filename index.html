@@ -6,14 +6,18 @@
 		<link rel="stylesheet" href="main.css">
 		<link rel="stylesheet" href="node_modules/dragula/dist/dragula.css">
 		<link rel="preconnect" href="https://fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		<div class="header-bg"></div>
-		<div class="etabs-tabgroup">
-			<div class="etabs-tabs"></div>
-		</div>
-		<div class="etabs-views"></div>
+
+		<tab-group>
+			<style>
+				@import url('./tabs.css');
+			</style>
+		</tab-group>
+
+		<script src="node_modules/electron-tabs/dist/electron-tabs.js"></script>
 
 		<button class="back">
 			<svg x="0px" y="0px" viewbox="0 0 24 24">

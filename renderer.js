@@ -8,11 +8,18 @@
 const {ipcRenderer} = require('electron');
 const remote = require('@electron/remote');
 const electronRemoteMain = require('@electron/remote/main');
-const TabGroup = require("electron-tabs");
+//const TabGroup = require("electron-tabs");
 const dragula = require('dragula');
 const normalizeUrl = require('normalize-url');
 
-let storeData, tabGroup, tabData, activeTab;
+let storeData, tabData, activeTab;
+
+const tabGroup = document.querySelector("tab-group");
+
+const loadingBadge = {
+	text: '<svg viewBox="0 0 100 100" style="background-color: transparent;"><circle cx="50" cy="50" r="26" stroke="#34a2fc" stroke-width="11" fill="none">  <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="2.4390243902439024s" values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>  <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="2.4390243902439024s" values="22.8707945181337 140.49202346853556;163.36281798666926 0;22.8707945181337 140.49202346853556" keyTimes="0;0.5;1"></animate></circle></svg>',
+	classname: 'loading'
+};
 
 ipcRenderer.send('request-store-instance');
 
@@ -24,39 +31,37 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 	tabData = storeData['tabData'];
 	activeTab = storeData['activeTab'];
 
-	tabGroup = new TabGroup({
-		ready: (tabGroup) => {
-			let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
+	// tabGroup.on("ready", (tabGroup) => {
+	// 	let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
 
-			drake.on('drop', (el, target, source, sibling) => {
-				let tabId = el.id;
-				let siblingId;
+	// 	drake.on('drop', (el, target, source, sibling) => {
+	// 		let tabId = el.id;
+	// 		let siblingId;
 
-				if (sibling) {
-					siblingId = sibling.id;
-				}
+	// 		if (sibling) {
+	// 			siblingId = sibling.id;
+	// 		}
 
-				let tabIndex, siblingIndex;
+	// 		let tabIndex, siblingIndex;
 
-				for (let i = 0; i < tabData.length; i++) {
-					if (tabData[i].id == tabId) {
-						tabIndex = i;
-					}
-					if (tabData[i].id == siblingId) {
-						siblingIndex = i;
-					}
-				}
+	// 		for (let i = 0; i < tabData.length; i++) {
+	// 			if (tabData[i].id == tabId) {
+	// 				tabIndex = i;
+	// 			}
+	// 			if (tabData[i].id == siblingId) {
+	// 				siblingIndex = i;
+	// 			}
+	// 		}
 
-				tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
+	// 		tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
 
-				ipcRenderer.send('update-store-tab-data', tabData);
-			});
-		}
-	});
+	// 		ipcRenderer.send('update-store-tab-data', tabData);
+	// 	});
+	// });
 
 	if (tabData) {
 		tabGroup.on('tab-active', (tab) => {
-			if (tab.tab.id) ipcRenderer.send('update-store-active-tab', tab.tab.id);
+			if (tab.element.id) ipcRenderer.send('update-store-active-tab', tab.element.id);
 		});
 
 		tabData.forEach((tabDatum) => doAddTab(tabDatum));
@@ -67,7 +72,7 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 // 	ipcRenderer.send('crash', e.message, e);
 // }
 
-const DEFAULT_USERAGENT = 'Mozilla/5.0 (Linux x86_64) Chrome/90.0.4430.212';
+const DEFAULT_USERAGENT = 'Mozilla/5.0 (Linux x86_64) Chrome/104.0.0.0';
 
 ipcRenderer.on('back-or-forward', (e, backOrForward) => {
 	if (backOrForward == 'browser-backward') {
@@ -83,7 +88,7 @@ ipcRenderer.on('add-tab', (e, tabDatum) => doAddTab(tabDatum));
 ipcRenderer.on('refresh-tab', (e, tabDatum) => {
 	if (tabGroup && tabDatum.id) {
 		for (let tab of tabGroup.getTabs()) {
-			if (tab && tab.tab && tab.tab.id && tab.tab.id == tabDatum.id) {
+			if (tab && tab.element && tab.element.id && tab.element.id == tabDatum.id) {
 				tab.setIcon(tabDatum.customFavIconURL ? normalizeUrl(tabDatum.customFavIconURL) : tabDatum.autoFavIconURL);
 
 				if (normalizeUrl(tab.webview.src) != normalizeUrl(tabDatum.src)) {
@@ -127,7 +132,7 @@ ipcRenderer.on('refresh-tab', (e, tabDatum) => {
 ipcRenderer.on('remove-tab', (e, id) => {
 	if (tabGroup) {
 		for (let tab of tabGroup.getTabs()) {
-			if (tab && tab.tab && tab.tab.id && tab.tab.id == id) {
+			if (tab && tab.element && tab.element.id && tab.element.id == id) {
 				tab.close();
 
 				break;
@@ -197,7 +202,7 @@ function doAddTab(tabDatum) {
 		});
 	}
 
-	tab.tab.id = tabDatum.id;
+	tab.element.id = tabDatum.id;
 
 	tab.on('webview-ready', (tab) => {
 		if (getWebContentsVar(tab)) {
@@ -235,7 +240,7 @@ function doAddTab(tabDatum) {
 	// })
 
 	tab.webview.addEventListener('did-start-loading', () => {
-		tab.setBadge('<img src="loading.gif" />');
+		tab.setBadge(loadingBadge);
 	})
 
 	tab.webview.addEventListener('did-stop-loading', () => {
@@ -263,7 +268,7 @@ function doAddTab(tabDatum) {
 		}
 	]);
 
-	tab.tab.addEventListener('contextmenu', () => {
+	tab.element.addEventListener('contextmenu', () => {
 		menu.popup()
 	}, false)
 
