@@ -6,9 +6,11 @@
 	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
-		"build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=res/icon.icns --prune=true --out=release-builds",
+		"build-mac": "electron-packager . --overwrite --asar --platform=darwin --arch=x64 --icon=res/icon.icns --prune=true --out=release-builds",
 		"build-linux": "electron-packager . --overwrite --asar --platform=linux --arch=x64 --icon=res/icon.png --prune=true --out=release-builds",
-		"build-windows": "electron-packager . --overwrite --asar --platform=win32 --arch=x64 --icon=res/icon.ico --prune=true --out=release-builds"
+		"build-windows": "electron-packager . --overwrite --asar --platform=win32 --arch=x64 --icon=res/icon.ico --prune=true --out=release-builds",
+		"build-all": "npm run build-linux && npm run build-windows && npm run build-mac",
+		"zip-all": "cd release-builds && rm *.zip && for f in $(ls -l --color=none | grep ^d | tr -s ' ' | cut -d' ' -f9); do zip -r9 $f.zip $f; done"
 	},
 	"repository": "https://deviat.net/repos/electrocomm",
 	"keywords": [
