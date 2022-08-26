@@ -194,10 +194,6 @@ document.querySelector('button#addTab').addEventListener('click', () => {
 	loadTabSettings(tabDatum);
 });
 
-document.querySelector('button.close').addEventListener('click', () => {
-	ipcRenderer.send('close-config');
-})
-
 ipcRenderer.send('request-store-instance');
 
 ipcRenderer.on('update-local-store-instance', (e, storeDataInstance) => {
