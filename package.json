@@ -27,6 +27,7 @@
 		"dragula": "^3.7.3",
 		"electron": "^20.1.0",
 		"electron-tabs": "^1.0.1",
-		"normalize-url": "^4.0.0"
+		"normalize-url": "^4.0.0",
+		"sortablejs": "^1.15.0"
 	}
 }

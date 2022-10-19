@@ -40,8 +40,11 @@
 }
 
 .etabs .nav .tabs {
-	-webkit-app-region: no-drag;
 	display: flex;
+}
+
+.etabs .nav .tabs, .etabs .nav .tabs .tab, .etabs .nav .tabs .tab .tab-icon, .etabs .nav .tabs .tab .tab-icon img {
+	-webkit-app-region: no-drag;
 }
 
 .etabs .nav .tabs .tab {

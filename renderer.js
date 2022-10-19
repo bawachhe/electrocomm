@@ -6,6 +6,7 @@
 // process.
 
 const {ipcRenderer} = require('electron');
+const Sortable = require('sortablejs');
 const remote = require('@electron/remote');
 const electronRemoteMain = require('@electron/remote/main');
 //const TabGroup = require("electron-tabs");
@@ -31,33 +32,30 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 	tabData = storeData['tabData'];
 	activeTab = storeData['activeTab'];
 
-	// tabGroup.on("ready", (tabGroup) => {
-	// 	let drake = dragula([tabGroup.tabContainer], {direction: "horizontal"});
+	const createNewSortable = () => {
+		const options = Object.assign({
+			direction: "horizontal",
+			animation: 150,
+			swapThreshold: 0.20,
+			onEnd: function(evt) {
+				tabIndex = evt.newDraggableIndex;
 
-	// 	drake.on('drop', (el, target, source, sibling) => {
-	// 		let tabId = el.id;
-	// 		let siblingId;
+				oldTabDataIndex = evt.oldDraggableIndex;
 
-	// 		if (sibling) {
-	// 			siblingId = sibling.id;
-	// 		}
+				tabData.splice(tabIndex, 0, tabData.splice(oldTabDataIndex, 1)[0]);
 
-	// 		let tabIndex, siblingIndex;
+				ipcRenderer.send('update-store-tab-data', tabData);
+			}
+		}, tabGroup.options.sortableOptions);
 
-	// 		for (let i = 0; i < tabData.length; i++) {
-	// 			if (tabData[i].id == tabId) {
-	// 				tabIndex = i;
-	// 			}
-	// 			if (tabData[i].id == siblingId) {
-	// 				siblingIndex = i;
-	// 			}
-	// 		}
+		new Sortable(tabGroup.tabContainer, options);
+	};
 
-	// 		tabData.splice(((siblingIndex === undefined) ? (tabData.length - 1) : siblingIndex), 0, tabData.splice(tabIndex, 1)[0]);
-
-	// 		ipcRenderer.send('update-store-tab-data', tabData);
-	// 	});
-	// });
+	if (Sortable) {
+		createNewSortable();
+	} else {
+		document.addEventListener("DOMContentLoaded", createNewSortable);
+	}
 
 	if (tabData) {
 		tabGroup.on('tab-active', (tab) => {
