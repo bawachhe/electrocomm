@@ -40,7 +40,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 		if (customFavIconURLInput.value !== savedSettings.customFavIconURL) {
 			let customFavIconURL = customFavIconURLInput.value;
 
-			if (customFavIconURL && !customFavIconURL.match('/https?:\/\//')) {
+			if (customFavIconURL && !customFavIconURL.match(/^https?\:\/\//)) {
 				customFavIconURL = 'https://' + customFavIconURL;
 			}
 
@@ -50,7 +50,7 @@ document.querySelector('button#saveConfig').addEventListener('click', () => {
 		if (srcInput.value !== savedSettings.src) {
 			let src = srcInput.value;
 
-			if (src && !src.match('/https?:\/\//')) {
+			if (src && !src.match(/^https?\:\/\//)) {
 				src = 'https://' + src;
 			}
 
