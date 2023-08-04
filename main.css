@@ -31,6 +31,11 @@ input, textarea {
 	margin: 5px;
 }
 
+textarea {
+	height: 10em;
+	width: 50em;
+}
+
 button.back, button.forward, button.config, button.minimize, button.maximize, button.close {
 	background: none;
 	border: none;
