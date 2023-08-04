@@ -70,7 +70,7 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 // 	ipcRenderer.send('crash', e.message, e);
 // }
 
-const DEFAULT_USERAGENT = 'Mozilla/5.0 (Linux x86_64) Chrome/104.0.0.0';
+const DEFAULT_USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/115.0.0.0';
 
 ipcRenderer.on('back-or-forward', (e, backOrForward) => {
 	if (backOrForward == 'browser-backward') {
@@ -87,45 +87,51 @@ ipcRenderer.on('refresh-tab', (e, tabDatum) => {
 	if (tabGroup && tabDatum.id) {
 		for (let tab of tabGroup.getTabs()) {
 			if (tab && tab.element && tab.element.id && tab.element.id == tabDatum.id) {
-				tab.setIcon(tabDatum.customFavIconURL ? normalizeUrl(tabDatum.customFavIconURL) : tabDatum.autoFavIconURL);
-
 				if (normalizeUrl(tab.webview.src) != normalizeUrl(tabDatum.src)) {
-					tab.webview.loadURL(tabDatum.src);
-					tab.setTitle(tabDatum.src);
-				}
-
-				// if (tab.webview.partition != tabDatum.sessionPartition) {
-				// 	tab.webview.partition = tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : '';
-				// }
-
-				if (tabDatum.customUserAgent && (tab.webview.useragent != tabDatum.customUserAgent)) {
-					tab.webview.useragent =  tabDatum.customUserAgent || DEFAULT_USERAGENT
-				}
-
-				if (tab.cssKey) {
-					tab.webview.removeInsertedCSS(tab.cssKey).then(() => {
-						if (tabDatum.customCSS) {
-							tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
-						}
-					});
+					tab.webview.loadURL(tabDatum.src).then(() => setTabData(tab, tabDatum));
 				}
 				else {
-					if (tabDatum.customCSS) {
-						tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
-					}
+					setTabData(tab, tabDatum)
 				}
-
-				if (tab.newWindowEventListener) {
-					tab.webview.removeEventListener('new-window', tab.newWindowEventListener);
-				}
-
-				doAddNewWindowListener(tab, tabDatum);
 
 				break;
 			}
 		}
 	}
 });
+
+function setTabData(tab, tabDatum) {
+	tab.setTitle(tabDatum.src);
+
+	tab.setIcon(tabDatum.customFavIconURL ? normalizeUrl(tabDatum.customFavIconURL) : tabDatum.autoFavIconURL);
+
+	// if (tab.webview.partition != tabDatum.sessionPartition) {
+	// 	tab.webview.partition = tabDatum.sessionPartition ? 'persist:' + tabDatum.sessionPartition : '';
+	// }
+
+	if (tabDatum.customUserAgent && (tab.webview.useragent != tabDatum.customUserAgent)) {
+		tab.webview.useragent =  tabDatum.customUserAgent || DEFAULT_USERAGENT
+	}
+
+	if (tab.cssKey) {
+		tab.webview.removeInsertedCSS(tab.cssKey).then(() => {
+			if (tabDatum.customCSS) {
+				tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
+			}
+		});
+	}
+	else {
+		if (tabDatum.customCSS) {
+			tab.webview.insertCSS(tabDatum.customCSS).then((cssKey) => tab.cssKey = cssKey);
+		}
+	}
+
+	if (tab.newWindowEventListener) {
+		tab.webview.removeEventListener('new-window', tab.newWindowEventListener);
+	}
+
+	doAddNewWindowListener(tab, tabDatum);
+}
 
 ipcRenderer.on('remove-tab', (e, id) => {
 	if (tabGroup) {
