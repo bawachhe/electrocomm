@@ -109,9 +109,9 @@ function createWindow () {
 		electronRemoteMain.enable(configWindow.webContents);
 
 		if (id && !isNaN(id))
-			configWindow.loadFile('configmod.html', {query: {"id": id }});
+			configWindow.loadFile('config.html', {query: {"id": id }});
 		else
-			configWindow.loadFile('configmod.html', {query: {"id": 1, "moredata":"hello" }});
+			configWindow.loadFile('config.html', {query: {"id": 1, "moredata":"hello" }});
 
 		// configWindow.webContents.openDevTools()
 	});
