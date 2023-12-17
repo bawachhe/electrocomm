@@ -70,7 +70,7 @@ ipcRenderer.on('receive-store-instance', (e, storeDataInstance) => {
 // 	ipcRenderer.send('crash', e.message, e);
 // }
 
-const DEFAULT_USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/115.0.0.0';
+const DEFAULT_USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 ipcRenderer.on('back-or-forward', (e, backOrForward) => {
 	if (backOrForward == 'browser-backward') {
