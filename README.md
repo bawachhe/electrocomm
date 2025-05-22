@@ -1,3 +1,10 @@
+# Update!  The last one!  (TL;DR: project archived)
+I made this project because I was tired of all the random unwanted features of some all-in-one browser-adjacent communciation apps, and also because I got tired of some of them commercializing.
+
+However, I also got tired of chasing e.g. Facebook and WhatsApp's constantly updating minimum Chrome useragent versions and the arms-race purportedly seeking user security but actually probably a political move to keep people on Chrome.
+
+I would still be inclined to try, but this repo is archived and I won't work on it anymore. because [Ferdium](https://ferdium.org) ([Github](https://github.com/ferdium/ferdium-app)) is an excellent alternative that works for all my needs, and also has a manifesto on [their main Github page](https://github.com/ferdium) that explains that they will maintain a community-driven approach to the project.  So, if you had any interest in this, please redirect yourself there because they carry on the same spirit that I attempted here.
+
 # ![ElectroComm Icon](https://raw.githubusercontent.com/bawachhe/electrocomm/master/res/icons/64x64.png) ElectroComm
 
 This is a minimal Electron application that I wrote to neatly compartmentalize my e-communications tabs into an independent window.
